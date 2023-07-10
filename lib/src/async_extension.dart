@@ -32,3 +32,8 @@ extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
         child: child!,
       );
 }
+
+extension AsyncButtonDuplicateExtension<T extends AsyncButton> on T {
+  @Deprecated("DUPLICATE, remove one")
+  AsyncButton async() => this;
+}

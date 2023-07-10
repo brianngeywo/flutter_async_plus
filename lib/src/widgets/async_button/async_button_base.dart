@@ -17,31 +17,19 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     this.controller,
     this.listenables = const [],
 
-    //AsyncButton.
-    Key? key,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
-    ValueChanged<bool>? onHover,
-    ValueChanged<bool>? onFocusChange,
-    ButtonStyle? style,
-    FocusNode? focusNode,
-    bool autofocus = false,
-    Clip clipBehavior = Clip.none,
-    MaterialStatesController? statesController,
-    required Widget child,
-  }) : super(
-          key: key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          onHover: onHover,
-          onFocusChange: onFocusChange,
-          style: style,
-          focusNode: focusNode,
-          autofocus: autofocus,
-          clipBehavior: clipBehavior,
-          statesController: statesController,
-          child: child,
-        );
+    //Base.
+    super.key,
+    super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus = false,
+    super.clipBehavior = Clip.none,
+    super.statesController,
+    super.child,
+  });
 
   /// The configs of [AsyncButton]. Prefer setting AsyncButton<Type>.setConfig().
   final AsyncButtonConfig? config;
@@ -51,9 +39,6 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
 
   @override
   final List<ValueListenable<bool>> listenables;
-
-  @override
-  State<AsyncButton<T>> createState() => AsyncButtonState<T>();
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
@@ -78,6 +63,7 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     if (this is AsyncButton<OutlinedButton>) {
       return OutlinedButtonTheme.of(context).style;
     }
+
     if (this is AsyncButton<FilledButton>) {
       return FilledButtonTheme.of(context).style;
     }
@@ -86,4 +72,7 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     }
     return ElevatedButtonTheme.of(context).style;
   }
+
+  @override
+  State<AsyncButton<T>> createState() => AsyncButtonState<T>();
 }

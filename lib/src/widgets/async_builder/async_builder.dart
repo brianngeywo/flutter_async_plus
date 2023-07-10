@@ -63,7 +63,7 @@ class AsyncBuilder<T> extends StatefulWidget implements AsyncWidget<T> {
     int retry = 0,
     WidgetBuilder? loader,
     WidgetBuilder? reloader,
-    Widget error(BuildContext context, AsyncController<T> controller)?,
+    Widget error(BuildContext context, AsyncController controller)?,
     required Widget builder(BuildContext context, T data),
   }) {
     return AsyncBuilder(
@@ -103,7 +103,7 @@ class AsyncBuilder<T> extends StatefulWidget implements AsyncWidget<T> {
   final int retry;
 
   /// The widget to build when [future]/[stream].onError is called.
-  final Widget Function(AsyncController<T> controller)? error;
+  final Widget Function(AsyncController controller)? error;
 
   /// The widget when [future]/[stream] has not completed the first time.
   final Widget? loader;

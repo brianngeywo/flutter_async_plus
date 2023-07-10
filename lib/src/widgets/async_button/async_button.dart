@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../flutter_async.dart';
@@ -20,41 +19,23 @@ class AsyncElevatedButton extends AsyncButton<ElevatedButton> {
 
   const AsyncElevatedButton({
     //Extended.
-    AsyncButtonConfig? config,
-    AsyncController? controller,
-    List<ValueListenable<bool>> listenables = const [],
+    super.config,
+    super.controller,
+    super.listenables,
 
     //Base.
-    Key? key,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
-    ValueChanged<bool>? onHover,
-    ValueChanged<bool>? onFocusChange,
-    ButtonStyle? style,
-    FocusNode? focusNode,
-    bool autofocus = false,
-    Clip clipBehavior = Clip.none,
-    MaterialStatesController? statesController,
-    required Widget child,
-  }) : super(
-          //Extended.
-          config: config,
-          controller: controller,
-          listenables: listenables,
-
-          //Base.
-          key: key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          onHover: onHover,
-          onFocusChange: onFocusChange,
-          style: style,
-          focusNode: focusNode,
-          autofocus: autofocus,
-          clipBehavior: clipBehavior,
-          statesController: statesController,
-          child: child,
-        );
+    super.key,
+    super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
+    super.statesController,
+    super.child,
+  });
 }
 
 class AsyncOutlinedButton extends AsyncButton<OutlinedButton> {
@@ -65,41 +46,23 @@ class AsyncOutlinedButton extends AsyncButton<OutlinedButton> {
 
   const AsyncOutlinedButton({
     //Extended.
-    AsyncButtonConfig? config,
-    AsyncController? controller,
-    List<ValueListenable<bool>> listenables = const [],
+    super.config,
+    super.controller,
+    super.listenables,
 
     //Base.
-    Key? key,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
-    ValueChanged<bool>? onHover,
-    ValueChanged<bool>? onFocusChange,
-    ButtonStyle? style,
-    FocusNode? focusNode,
-    bool autofocus = false,
-    Clip clipBehavior = Clip.none,
-    MaterialStatesController? statesController,
-    required Widget child,
-  }) : super(
-          //Extended.
-          config: config,
-          controller: controller,
-          listenables: listenables,
-
-          //Base.
-          key: key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          onHover: onHover,
-          onFocusChange: onFocusChange,
-          style: style,
-          focusNode: focusNode,
-          autofocus: autofocus,
-          clipBehavior: clipBehavior,
-          statesController: statesController,
-          child: child,
-        );
+    super.key,
+    super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
+    super.statesController,
+    super.child,
+  });
 }
 
 class AsyncTextButton extends AsyncButton<TextButton> {
@@ -110,41 +73,23 @@ class AsyncTextButton extends AsyncButton<TextButton> {
 
   const AsyncTextButton({
     //Extended.
-    AsyncButtonConfig? config,
-    AsyncController? controller,
-    List<ValueListenable<bool>> listenables = const [],
+    super.config,
+    super.controller,
+    super.listenables,
 
     //Base.
-    Key? key,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
-    ValueChanged<bool>? onHover,
-    ValueChanged<bool>? onFocusChange,
-    ButtonStyle? style,
-    FocusNode? focusNode,
-    bool autofocus = false,
-    Clip clipBehavior = Clip.none,
-    MaterialStatesController? statesController,
-    required Widget child,
-  }) : super(
-          //Extended.
-          config: config,
-          controller: controller,
-          listenables: listenables,
-
-          //Base.
-          key: key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          onHover: onHover,
-          onFocusChange: onFocusChange,
-          style: style,
-          focusNode: focusNode,
-          autofocus: autofocus,
-          clipBehavior: clipBehavior,
-          statesController: statesController,
-          child: child,
-        );
+    super.key,
+    super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
+    super.statesController,
+    super.child,
+  });
 }
 
 class AsyncFilledButton extends AsyncButton<FilledButton> {
@@ -154,39 +99,21 @@ class AsyncFilledButton extends AsyncButton<FilledButton> {
   static void setConfig(AsyncButtonConfig config) => _config = config;
   const AsyncFilledButton({
     //Extended.
-    AsyncButtonConfig? config,
-    AsyncController? controller,
-    List<ValueListenable<bool>> listenables = const [],
+    super.config,
+    super.controller,
+    super.listenables,
 
     //Base.
-    Key? key,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
-    ValueChanged<bool>? onHover,
-    ValueChanged<bool>? onFocusChange,
-    ButtonStyle? style,
-    FocusNode? focusNode,
-    bool autofocus = false,
-    Clip clipBehavior = Clip.none,
-    MaterialStatesController? statesController,
-    required Widget child,
-  }) : super(
-          //Extended.
-          config: config,
-          controller: controller,
-          listenables: listenables,
-
-          //Base.
-          key: key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          onHover: onHover,
-          onFocusChange: onFocusChange,
-          style: style,
-          focusNode: focusNode,
-          autofocus: autofocus,
-          clipBehavior: clipBehavior,
-          statesController: statesController,
-          child: child,
-        );
+    super.key,
+    super.onPressed,
+    super.onLongPress,
+    super.onHover,
+    super.onFocusChange,
+    super.style,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
+    super.statesController,
+    super.child,
+  });
 }

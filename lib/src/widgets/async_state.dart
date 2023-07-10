@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../flutter_async.dart';
-import '../async_controller_impl.dart';
 
 abstract class AsyncWidget<T> extends StatefulWidget {
   const AsyncWidget({
@@ -72,15 +71,12 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends _AsyncState<W> {
   Object? _error;
   StackTrace? _stackTrace;
   Size? _size;
-
   bool get hasSize => _size != null;
-
+  
   @override
   Size get size => _size!;
-
   @override
-  ValueNotifier<bool> get loading => controller.loading;
-
+  late final loading = widget.controller?.loading ?? ValueNotifier(false);
   @override
   bool get isLoading => loading.value;
   @override
@@ -139,13 +135,11 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends _AsyncState<W> {
     setLoading(widget.listenables.any((l) => l.value));
   }
 
-  late final controller = widget.controller ?? AsyncControllerImpl();
-
   WidgetsBinding? get _binding => WidgetsBinding.instance;
 
   @override
   void initState() {
-    controller.attach(this);
+    widget.controller?.attach(this);
     _binding?.addPostFrameCallback((_) => _size ??= context.size);
     super.initState();
   }

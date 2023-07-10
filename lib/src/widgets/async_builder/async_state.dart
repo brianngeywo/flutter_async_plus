@@ -107,7 +107,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
   @override
   void initState() {
     super.initState();
-    controller.attach(this);
+    widget.controller?.attach(this);
 
     if (widget.initialData != null) _setData(widget.initialData);
     if (widget.interval != null) _setInterval(widget.interval);
@@ -159,6 +159,8 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
   @override
   bool get hasData => _data != null;
 
+  
+
   @override
   Widget build(BuildContext context) {
     /// Stack inherits the size of the largest child.
@@ -178,7 +180,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
 
         // On error.
         if (widget.error != null)
-          KeepSize(visible: hasError, child: widget.error!(controller)),
+          KeepSize(visible: hasError, child: widget.error!(this)),
       ],
     );
   }

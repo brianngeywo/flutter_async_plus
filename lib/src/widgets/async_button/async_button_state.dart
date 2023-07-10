@@ -21,15 +21,30 @@ class AsyncButtonState<T extends ButtonStyleButton>
   AsyncButtonConfig get config =>
       widget.config ?? _config ?? AsyncButton.baseConfig;
 
+  late final errorColor = Theme.of(context).colorScheme.error;
+
   late final baseStyle =
       (widget.style ?? widget.themeStyleOf(context) ?? const ButtonStyle())
           .merge(widget.defaultStyleOf(context));
 
+  late final errorStyle = baseStyle.copyWith(
+    backgroundColor: () {
+      if (isOutlinedButton) return null;
+      if (isTextButton) return null;
+      return MaterialStatePropertyAll(errorColor);
+    }(),
+    foregroundColor: () {
+      if (isElevatedButton) return null;
+      if (isFilledButton) return null;
+      return MaterialStatePropertyAll(errorColor);
+    }(),
+  );
+
   @override
   AsyncStyle<ButtonStyle> get asyncStyle => AsyncStyle(
         baseStyle: baseStyle,
-        errorStyle: config.errorStyle(context, this, baseStyle),
-        loadingStyle: config.loadingStyle(context, this, baseStyle),
+        errorStyle: baseStyle,
+        loadingStyle: baseStyle,
         errorDuration: config.errorDuration,
         styleDuration: config.styleDuration,
         styleCurve: config.styleCurve,
@@ -48,8 +63,6 @@ class AsyncButtonState<T extends ButtonStyleButton>
   @override
   Future<void> longPress() => setAction(widget.onLongPress!);
 
-  // late final _controller = AsyncButtonController()..attach(this);
-
   @override
   Widget build(BuildContext context) {
     Widget animatedSize({required Widget child}) {
@@ -65,13 +78,6 @@ class AsyncButtonState<T extends ButtonStyleButton>
       );
     }
 
-    // Actions.
-    final onPressed = widget.onPressed != null ? press : null;
-    final onLongPress = widget.onLongPress != null ? longPress : null;
-
-    // Animated style.
-    final style = animatedStyle ?? baseStyle;
-
     // Animated child.
     final child = animatedSize(
       child: () {
@@ -84,65 +90,23 @@ class AsyncButtonState<T extends ButtonStyleButton>
     return SizedBox.fromSize(
       size: config.keepSize && hasSize ? size : null,
       child: () {
-        if (isOutlinedButton) {
-          return OutlinedButton(
-            key: widget.key,
-            onPressed: onPressed,
-            onLongPress: onLongPress,
-            onHover: widget.onHover,
-            onFocusChange: widget.onFocusChange,
-            style: style,
-            focusNode: widget.focusNode,
-            autofocus: widget.autofocus,
-            clipBehavior: widget.clipBehavior,
-            statesController: widget.statesController,
-            child: child,
-          );
-        }
-        if (isTextButton) {
-          return TextButton(
-            key: widget.key,
-            onPressed: onPressed,
-            onLongPress: onLongPress,
-            onHover: widget.onHover,
-            onFocusChange: widget.onFocusChange,
-            style: style,
-            focusNode: widget.focusNode,
-            autofocus: widget.autofocus,
-            clipBehavior: widget.clipBehavior,
-            statesController: widget.statesController,
-            child: child,
-          );
-        }
-        if (isFilledButton) {
-          return FilledButton(
-            key: widget.key,
-            onPressed: onPressed,
-            onLongPress: onLongPress,
-            onHover: widget.onHover,
-            onFocusChange: widget.onFocusChange,
-            style: style,
-            focusNode: widget.focusNode,
-            autofocus: widget.autofocus,
-            clipBehavior: widget.clipBehavior,
-            statesController: widget.statesController,
-            child: child,
-          );
-        }
-        return ElevatedButton(
-          key: widget.key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          onHover: widget.onHover,
-          onFocusChange: widget.onFocusChange,
-          style: style,
-          focusNode: widget.focusNode,
-          autofocus: widget.autofocus,
-          clipBehavior: widget.clipBehavior,
-          statesController: widget.statesController,
-          child: child,
-        );
-      }(),
+        if (isOutlinedButton) return OutlinedButton.new;
+        if (isTextButton) return TextButton.new;
+        if (isFilledButton) return FilledButton.new;
+        return ElevatedButton.new;
+      }()(
+        key: widget.key,
+        onPressed: widget.onPressed != null ? press : null,
+        onLongPress: widget.onLongPress != null ? longPress : null,
+        onHover: widget.onHover,
+        onFocusChange: widget.onFocusChange,
+        style: animatedStyle ?? baseStyle,
+        focusNode: widget.focusNode,
+        autofocus: widget.autofocus,
+        clipBehavior: widget.clipBehavior,
+        statesController: widget.statesController,
+        child: child,
+      ),
     );
   }
 }

@@ -7,7 +7,8 @@ void main() => runApp(
     );
 
 class MyWidget extends StatelessWidget {
-  const MyWidget();
+  const MyWidget({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class MyWidget extends StatelessWidget {
 
     return Theme(
       data: ThemeData(
-        elevatedButtonTheme: ElevatedButtonThemeData(
+        elevatedButtonTheme: const ElevatedButtonThemeData(
           style: AsyncButtonStyle(
             config: AsyncButtonConfig(),
           ),
@@ -51,7 +52,7 @@ class MyWidget extends StatelessWidget {
                           child: child,
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'state.loadingMessage',
                         // key: ValueKey(state.loadingMessage),
                       ),
@@ -79,10 +80,10 @@ class MyWidget extends StatelessWidget {
                 onPressed: onPressed,
                 child: const Text('TextButton'),
               ),
-              AsyncFilledButton(
-                onPressed: onPressed,
-                child: const Text('FilledButton'),
-              ),
+              // AsyncFilledButton(
+              //   onPressed: onPressed,
+              //   child: const Text('FilledButton'),
+              // ),
             ],
           ),
         ),

@@ -10,8 +10,8 @@ class AsyncButtonConfig {
     this.styleCurve = Curves.fastOutSlowIn,
     this.loader = AsyncButtonLoaders.spinner,
     this.error = AsyncButtonErrors.text,
-    this.loadingStyle = _defaultLoadingStyle,
-    this.errorStyle = _defaultErrorStyle,
+    // this.loadingStyle,
+    // this.errorStyle,
   });
 
   /// Whether or not this button should keep its size when animating.
@@ -37,40 +37,11 @@ class AsyncButtonConfig {
   final Widget Function(BuildContext context, AsyncButtonController state)
       error;
 
-  /// The style to apply on loading.
-  final ButtonStyle Function(BuildContext context,
-      AsyncButtonController controller, ButtonStyle state) loadingStyle;
+  // /// The style to apply on loading.
+  // final ButtonStyle? loadingStyle;
 
-  /// The style to apply on error.
-  final ButtonStyle Function(BuildContext context,
-      AsyncButtonController controller, ButtonStyle state) errorStyle;
-
-  /// Overrides loading [ButtonStyle].
-  static ButtonStyle _defaultLoadingStyle(BuildContext context,
-      AsyncButtonController controller, ButtonStyle state) {
-    return state.copyWith(
-      padding: const MaterialStatePropertyAll(EdgeInsets.zero),
-    );
-  }
-
-  /// Overrides error [ButtonStyle].
-  static ButtonStyle _defaultErrorStyle(
-      BuildContext context, AsyncButtonController button, ButtonStyle style) {
-    final errorColor = Theme.of(context).colorScheme.error;
-
-    return style.copyWith(
-      backgroundColor: () {
-        if (button.isOutlinedButton) return null;
-        if (button.isTextButton) return null;
-        return MaterialStatePropertyAll(errorColor);
-      }(),
-      foregroundColor: () {
-        if (button.isElevatedButton) return null;
-        if (button.isFilledButton) return null;
-        return MaterialStatePropertyAll(errorColor);
-      }(),
-    );
-  }
+  // /// The style to apply on error.
+  // final ButtonStyle? errorStyle;
 }
 
 /// Class that defines [AsyncButton] loaders.
@@ -124,16 +95,4 @@ class AnimatedSizeConfig {
   final Clip clipBehavior;
   final Alignment alignment;
   final Duration? reverseDuration;
-}
-
-extension SizeContext on BuildContext {
-  static final map = <BuildContext, Size?>{};
-
-  /// Returns the first size of the widget. Starts as null and then gets the
-  /// size after the first frame.
-  Size? get firstSize {
-    if (map[this] != null) return map[this];
-    WidgetsBinding.instance.addPostFrameCallback((_) => map[this] ??= size);
-    return map[this];
-  }xxs
 }
