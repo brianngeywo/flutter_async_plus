@@ -81,6 +81,7 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
   }
 
   void listener() {
+    if (widget.listenables.isEmpty) return;
     setLoading(widget.listenables.any((l) => l.value));
   }
 
@@ -104,14 +105,10 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
 
   @override
   void didUpdateWidget(covariant W oldWidget) {
-    print(widget.controller);
     if (widget.controller != oldWidget.controller) {
       widget.controller?.attach(this);
-      print('REATTACH');
     }
     if (widget.listenables != oldWidget.listenables) {
-      // print(widget.runtimeType);
-      // print('new listenables');
       Listenable.merge(oldWidget.listenables).removeListener(listener);
       Listenable.merge(widget.listenables).addListener(listener);
       listener();
