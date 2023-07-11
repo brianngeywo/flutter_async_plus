@@ -70,6 +70,13 @@ mixin AnimatedStyleMixin<W extends StatefulWidget, S>
   late final _ac = AnimationController(vsync: this, duration: styleDuration);
   late final _curve = CurvedAnimation(parent: _ac, curve: styleCurve);
   Animation<S>? _style;
+  Size? _size;
+
+  /// The size of the widget.
+  Size get size => _size!;
+
+  /// Whether the widget has a size.
+  bool get hasSize => _size != null;
 
   /// The animated [S] value.
   S? get animatedStyle => _style?.value;
@@ -87,7 +94,7 @@ mixin AnimatedStyleMixin<W extends StatefulWidget, S>
   void setStyle(S newStyle) {
     _style = lerp.tween(_style?.value, newStyle).animate(_curve);
 
-    if (mounted) _ac.forward(from: 0.0);
+    if (mounted && hasSize) _ac.forward(from: 0.0);
   }
 
   WidgetsBinding? get _binding => WidgetsBinding.instance;
@@ -96,6 +103,7 @@ mixin AnimatedStyleMixin<W extends StatefulWidget, S>
   void initState() {
     super.initState();
     _binding?.addPostFrameCallback((_) {
+      _size ??= context.size;
       _ac.addListener(() => setState(() {}));
     });
   }
