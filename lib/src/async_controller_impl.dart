@@ -13,7 +13,7 @@ class AsyncControllerImpl<T> implements AsyncController<T> {
   final state = <AsyncState>{};
 
   Set<AsyncState> get _state {
-    assert(state.isNotEmpty, 'No AsyncController attached.');
+    assert(state.isNotEmpty, 'AsyncController not attached to any AsyncWidget');
     return state;
   }
 
@@ -54,9 +54,9 @@ class AsyncControllerImpl<T> implements AsyncController<T> {
 class AsyncButtonControllerImpl<T> extends AsyncControllerImpl<T>
     implements AsyncButtonController<T> {
   Set<AsyncButtonState> get button {
-    final states = state.whereType<AsyncButtonState>();
-    assert(states.isNotEmpty, 'No AsyncButtonController attached.');
-    return states.toSet();
+    final l = state.whereType<AsyncButtonState>();
+    assert(l.isNotEmpty, 'AsyncController not attached to any AsyncButton');
+    return l.toSet();
   }
 
   @override
@@ -88,9 +88,9 @@ class AsyncButtonControllerImpl<T> extends AsyncControllerImpl<T>
 class AsyncBuilderControllerImpl<T> extends AsyncControllerImpl<T>
     implements AsyncStreamController<T>, AsyncFutureController<T> {
   Set<AsyncBuilderState> get builder {
-    final states = state.whereType<AsyncBuilderState>();
-    assert(states.isNotEmpty, 'No AsyncBuilderController attached.');
-    return states.toSet();
+    final l = state.whereType<AsyncBuilderState>();
+    assert(l.isNotEmpty, 'AsyncController not attached to any AsyncBuilder');
+    return l.toSet();
   }
 
   @override
