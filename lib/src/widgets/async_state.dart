@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_async/src/async_controller_impl.dart';
 
 import '../../flutter_async.dart';
 
@@ -21,68 +22,24 @@ abstract class AsyncWidget<T> extends StatefulWidget {
   final List<ValueListenable<bool>> listenables;
 }
 
-abstract class _AsyncState<W extends AsyncWidget> extends State<W>
-    implements
-        AsyncButtonController,
-        AsyncStreamController,
-        AsyncFutureController,
-        AsyncController {
-  // * AsyncController
-  @override
-  void attach(state) => throw UnimplementedError();
-  @override
-  bool get isAttached => throw UnimplementedError();
-
-  // * AsyncFutureController
-  @override
-  get data => throw UnimplementedError();
-  @override
-  bool get hasData => throw UnimplementedError();
-  @override
-  bool get isReloading => throw UnimplementedError();
-  @override
-  bool get isPaused => throw UnimplementedError();
-
-  // * AsyncStreamController & AsyncFutureController
-  @override
-  void pause([resumeSignal]) => throw UnimplementedError();
-  @override
-  void resume() => throw UnimplementedError();
-  @override
-  FutureOr<void> cancel() => throw UnimplementedError();
-
-  // * AsyncButtonController
-  @override
-  bool get isElevatedButton => widget is AsyncButton<ElevatedButton>;
-  @override
-  bool get isTextButton => widget is AsyncButton<TextButton>;
-  @override
-  bool get isOutlinedButton => widget is AsyncButton<OutlinedButton>;
-  @override
-  bool get isFilledButton => widget is AsyncButton<FilledButton>;
-  @override
-  FutureOr<void> longPress() => throw UnimplementedError();
-  @override
-  FutureOr<void> press() => throw UnimplementedError();
-}
-
-abstract class AsyncState<W extends AsyncWidget<T>, T> extends _AsyncState<W> {
+abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
+    implements AsyncController<T> {
   var _hasError = false;
   Object? _error;
   StackTrace? _stackTrace;
-  Size? _size;
-  bool get hasSize => _size != null;
-  
+
   @override
-  Size get size => _size!;
-  @override
-  late final loading = widget.controller?.loading ?? ValueNotifier(false);
+  late final loading = ValueNotifier(false);
+
   @override
   bool get isLoading => loading.value;
+
   @override
   bool get hasError => _hasError;
+
   @override
   Object? get error => _error;
+
   @override
   StackTrace? get stackTrace => _stackTrace;
 
@@ -91,18 +48,10 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends _AsyncState<W> {
   /// When null, the feature is disabled.
   Duration? get errorDuration;
 
-  /// The [Exception.message], [Error.message] or [Object.toString].
-  String get errorMessage {
-    try {
-      return (error as dynamic).message;
-    } catch (_) {
-      return '$error';
-    }
-  }
-
   /// Sets the loading state to [isLoading].
   void setLoading(bool isLoading) {
     loading.value = isLoading;
+    widget.controller?.loading.value = isLoading;
   }
 
   /// Sets the error state to [hasError].
@@ -135,12 +84,9 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends _AsyncState<W> {
     setLoading(widget.listenables.any((l) => l.value));
   }
 
-  WidgetsBinding? get _binding => WidgetsBinding.instance;
-
   @override
   void initState() {
     widget.controller?.attach(this);
-    _binding?.addPostFrameCallback((_) => _size ??= context.size);
     super.initState();
   }
 
@@ -154,6 +100,23 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends _AsyncState<W> {
     Listenable.merge(widget.listenables).addListener(listener);
     loading.addListener(() => setState(() {}));
     super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant W oldWidget) {
+    print(widget.controller);
+    if (widget.controller != oldWidget.controller) {
+      widget.controller?.attach(this);
+      print('REATTACH');
+    }
+    if (widget.listenables != oldWidget.listenables) {
+      // print(widget.runtimeType);
+      // print('new listenables');
+      Listenable.merge(oldWidget.listenables).removeListener(listener);
+      Listenable.merge(widget.listenables).addListener(listener);
+      listener();
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

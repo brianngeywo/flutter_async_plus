@@ -3,7 +3,17 @@
 part of 'async_button.dart';
 
 class AsyncButtonState<T extends ButtonStyleButton>
-    extends AsyncStyleState<AsyncButton<T>, void, ButtonStyle> {
+    extends AsyncStyleState<AsyncButton<T>, void, ButtonStyle>
+    implements AsyncButtonController {
+  @override
+  bool get isElevatedButton => widget is AsyncButton<ElevatedButton>;
+  @override
+  bool get isTextButton => widget is AsyncButton<TextButton>;
+  @override
+  bool get isOutlinedButton => widget is AsyncButton<OutlinedButton>;
+  @override
+  bool get isFilledButton => widget is AsyncButton<FilledButton>;
+
   /// Resolves the default [AsyncButtonConfig] of this [T].
   AsyncButtonConfig? get _config {
     final config = () {
@@ -40,11 +50,14 @@ class AsyncButtonState<T extends ButtonStyleButton>
     }(),
   );
 
+  late final loadingStyle = baseStyle.copyWith(
+      padding: const MaterialStatePropertyAll(EdgeInsets.zero));
+
   @override
   AsyncStyle<ButtonStyle> get asyncStyle => AsyncStyle(
         baseStyle: baseStyle,
-        errorStyle: baseStyle,
-        loadingStyle: baseStyle,
+        errorStyle: errorStyle,
+        loadingStyle: loadingStyle,
         errorDuration: config.errorDuration,
         styleDuration: config.styleDuration,
         styleCurve: config.styleCurve,

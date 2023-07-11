@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_async/flutter_async.dart';
 
 import '../async_state.dart';
-import 'async_builder.dart';
 
-class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
+class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
+    implements AsyncFutureController<T>, AsyncStreamController<T> {
+  
   @override
   void pause([resumeSignal]) {
     setState(() => _subscription?.pause(resumeSignal));
@@ -107,7 +108,6 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
   @override
   void initState() {
     super.initState();
-    widget.controller?.attach(this);
 
     if (widget.initialData != null) _setData(widget.initialData);
     if (widget.interval != null) _setInterval(widget.interval);
@@ -159,8 +159,6 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
   @override
   bool get hasData => _data != null;
 
-  
-
   @override
   Widget build(BuildContext context) {
     /// Stack inherits the size of the largest child.
@@ -184,6 +182,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
       ],
     );
   }
+
 }
 
 class KeepSize extends Visibility {

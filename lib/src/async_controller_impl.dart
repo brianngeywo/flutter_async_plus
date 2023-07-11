@@ -1,83 +1,125 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 import '../flutter_async.dart';
+import 'widgets/async_builder/async_state.dart';
 import 'widgets/async_state.dart';
 
 @protected
 class AsyncControllerImpl<T> implements AsyncController<T> {
-  AsyncState? _state;
-  AsyncState get state {
-    assert(isAttached, 'AsyncController is not attached to an async widget.');
-    return _state!;
+  final state = <AsyncState>{};
+
+  Set<AsyncState> get _state {
+    assert(state.isNotEmpty, 'No AsyncController attached.');
+    return state;
   }
-
-  @override
-  void attach(state) => _state = state;
-
-  @override
-  bool get isAttached => _state != null;
 
   @override
   final loading = ValueNotifier(false);
 
   @override
-  bool get isLoading => state.isLoading;
+  bool get isLoading => _state.any((state) => state.isLoading);
 
   @override
-  bool get hasError => state.hasError;
+  bool get hasError => _state.any((state) => state.hasError);
 
   @override
-  Object? get error => state.error;
+  Object? get error =>
+      hasError ? state.firstWhere((e) => e.hasError).error : null;
 
   @override
-  StackTrace? get stackTrace => state.stackTrace;
+  StackTrace? get stackTrace =>
+      hasError ? state.firstWhere((e) => e.hasError).stackTrace : null;
 
   @override
-  void reload() => state.reload();
+  FutureOr<void> reload() => Future.wait(_state.map((e) async => e.reload()));
+
+  @override
+  bool operator ==(Object other) {
+    print('identical: ');
+    // TODO: Verify didUpdateWidget, if is called when the controller changes.
+    if (identical(this, other)) return true;
+
+    return other is AsyncControllerImpl<T> && other.hashCode == state.hashCode;
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ state.hashCode;
 }
 
 @protected
 class AsyncButtonControllerImpl<T> extends AsyncControllerImpl<T>
     implements AsyncButtonController<T> {
+  Set<AsyncButtonState> get button {
+    final states = state.whereType<AsyncButtonState>();
+    assert(states.isNotEmpty, 'No AsyncButtonController attached.');
+    return states.toSet();
+  }
+
   @override
-  FutureOr<void> press() => state.press();
+  FutureOr<void> press() => Future.wait(button.map((e) async => e.press()));
   @override
-  FutureOr<void> longPress() => state.longPress();
+  FutureOr<void> longPress() =>
+      Future.wait(button.map((e) async => e.longPress()));
   @override
-  bool get isElevatedButton => state.isElevatedButton;
+  bool get isElevatedButton => button.any((e) => e.isElevatedButton);
   @override
-  bool get isTextButton => state.isTextButton;
+  bool get isTextButton => button.any((e) => e.isTextButton);
   @override
-  bool get isOutlinedButton => state.isOutlinedButton;
+  bool get isOutlinedButton => button.any((e) => e.isOutlinedButton);
   @override
-  bool get isFilledButton => state.isFilledButton;
+  bool get isFilledButton => button.any((e) => e.isFilledButton);
   @override
-  Size get size => state.size;
+  Size get size => button.first.size;
+
+  @override
+  bool operator ==(Object other) {
+    print('identical: ');
+    if (identical(this, other)) return true;
+
+    return other is AsyncControllerImpl<T> && other.state == state;
+  }
 }
 
 @protected
 class AsyncBuilderControllerImpl<T> extends AsyncControllerImpl<T>
     implements AsyncStreamController<T>, AsyncFutureController<T> {
-  @override
-  bool get isPaused => state.isPaused;
+  Set<AsyncBuilderState> get builder {
+    final states = state.whereType<AsyncBuilderState>();
+    assert(states.isNotEmpty, 'No AsyncBuilderController attached.');
+    return states.toSet();
+  }
 
   @override
-  bool get isReloading => state.isReloading;
+  bool get isPaused => builder.any((e) => e.isPaused);
 
   @override
-  bool get hasData => state.hasData;
+  bool get isReloading => builder.any((e) => e.isReloading);
 
   @override
-  T? get data => state.data;
+  bool get hasData => builder.any((e) => e.hasData);
 
   @override
-  void pause([resumeSignal]) => state.pause(resumeSignal);
+  T? get data {
+    if (!hasData) return null;
+    return builder.firstWhere((e) => e.hasData).data;
+  }
 
   @override
-  void resume() => state.resume();
+  void pause([resumeSignal]) => builder.forEach((e) => e.pause(resumeSignal));
 
   @override
-  FutureOr<void> cancel() => state.cancel();
+  void resume() => builder.forEach((e) => e.resume());
+
+  @override
+  FutureOr<void> cancel() => Future.wait(builder.map((e) async => e.cancel()));
+}
+
+extension AsyncControllerExtensijhoon on AsyncController {
+  void attach(AsyncState state) {
+    (this as dynamic).state.add(state);
+  }
 }

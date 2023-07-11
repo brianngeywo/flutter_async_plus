@@ -20,13 +20,6 @@ abstract class AsyncController<T> {
   /// The [AsyncButtonController] for [AsyncButton].
   static AsyncButtonController<T> button<T>() => AsyncButtonControllerImpl();
 
-  /// Attaches this controller to an [AsyncWidget].
-  @protected
-  void attach(AsyncState state);
-
-  /// Whether this controller is attached to an [AsyncWidget].
-  bool get isAttached;
-
   /// A listenable that notifies when [isLoading] changes.
   ValueNotifier<bool> get loading;
 
@@ -54,7 +47,7 @@ abstract class AsyncController<T> {
   /// - [AsyncFutureController] or simply [AsyncController.future]
   /// - [AsyncStreamController] or simply [AsyncController.stream]
   /// - [AsyncButtonController] or simply [AsyncController.button]
-  void reload();
+  FutureOr<void> reload();
 }
 
 abstract class AsyncButtonController<T> extends AsyncController<T> {

@@ -1,5 +1,8 @@
 part of 'async_button.dart';
 
+typedef AsyncWidgetBuilder = Widget Function(
+    BuildContext context, AsyncButtonController state);
+
 /// Class that defines [AsyncButton] states and styles.
 class AsyncButtonConfig {
   const AsyncButtonConfig({
