@@ -1,6 +1,6 @@
 name: flutter_async
-description: A package offers a collection of custom asynchronous widgets that provide the flexibility to build and manipulate data programmatically. These widgets are designed to simplify the process of handling asynchronous operations in your Flutter applications.
-version: 0.1.0
+description: Handle async tasks with ease through automatic loading, error handling, and native widget integration.
+version: 0.3.0
 homepage: https://www.branvier.com
 
 environment:

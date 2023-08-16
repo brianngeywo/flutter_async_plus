@@ -7,12 +7,6 @@ Flutter Async is a Flutter package designed to manage asynchronous tasks in Flut
 - **AsyncBuilder:** A widget for building interfaces based on Future or Stream data sources. It provides built-in handling for loading and error states, as well as a mechanism for automatic or user-triggered retries.
 - **AsyncButton (AsyncElevatedButton, AsyncFilledButton, AsyncTextButton, AsyncOutlinedButton):** Buttons that trigger asynchronous actions. These buttons automatically show a loading indicator while the action is in progress, and also provide error handling.
 
-## Seamless Integration and Theming
-
-One of the main goals of flutter_async is to provide a clean and seamless integration with existing Flutter widgets. The package is designed to be as "native" as possible, following closely Flutter's own conventions and practices.
-
-When using flutter_async, all theme configurations from widgets are inherited from `ThemeData` as expected, and the package remains loyal to the original button themes. This loyalty to native design means you can easily add or remove flutter_async from your project with **no impact** on theming and styling.
-
 ## AsyncBuilder
 
 AsyncBuilder is a powerful widget that simplifies handling of Future and Stream objects in Flutter.
@@ -21,34 +15,34 @@ Here are the properties of AsyncBuilder:
 
 ```dart
   /// The initial data to pass to the [builder].
-  final T? initial;
+  final T? initialData;
 
   /// The bool [listenables] to listen and animate to external loading states.
   final List<ValueListenable<bool>> listenables;
 
-  /// The [Future] to load [builder] with. When set, [stream] must be null.
-  final Future<T> Function()? future;
+  /// The [Future] to load [builder] with. When set, [getStream] must be null.
+  final Future<T> Function()? getFuture;
 
-  /// The [Stream] to load [builder] with. When set, [future] must be null.
-  final Stream<T> Function()? stream;
+  /// The [Stream] to load [builder] with. When set, [getFuture] must be null.
+  final Stream<T> Function()? getStream;
 
-  /// The interval to auto reload the [future]/[stream].
+  /// The interval to auto reload the [getFuture]/[getStream].
   final Duration? interval;
 
-  /// The number of times to retry the [future]/[stream] on error.
+  /// The number of times to retry the [getFuture]/[getStream] on error.
   final int retry;
 
-  /// The widget to build when [future]/[stream].onError is called.
-  final Widget Function(AsyncController<T> controller)? error;
+  /// The widget to build when [getFuture]/[getStream].onError is called.
+  final ErrorBuilder? error;
 
-  /// The widget when [future]/[stream] has not completed the first time.
-  final Widget? loader;
+  /// The widget when [getFuture]/[getStream] has not completed the first time.
+  final WidgetBuilder? loader;
 
-  /// The widget when [future]/[stream] has completed at least once.
-  final Widget? reloader;
+  /// The widget when [getFuture]/[getStream] has completed at least once.
+  final WidgetBuilder? reloader;
 
-  /// The widget when [future]/[stream] has [T] data.
-  final Widget Function(T data) builder;
+  /// The widget when [getFuture]/[getStream] has [T] data.
+  final Widget Function(BuildContext context, T data) builder;
 
   /// The [AsyncController] to use.
   final AsyncController<T>? controller;
@@ -58,10 +52,7 @@ Here are the properties of AsyncBuilder:
 
 ```dart
   /// Reloads the async [Function].
-  void reload([ActionType action = ActionType.primary]);
-
-  /// Whete this controller is attached to an async widget.
-  bool get isAttached;
+  void reload();
 
   /// The [Future] or [Stream] error.
   Object? get error;
@@ -102,8 +93,7 @@ For stream:
   bool get isReloading;
 ```
 
-If just need a simple `reload()` api for activating your buttons programatically, feel
-free to use just the `AsyncController` base api. All async widgets are compatible with it.
+If just need a simple `reload()` api for activating your buttons programatically, feel free to use just the `AsyncController` base api. All async widgets are compatible with it.
 
 ## AsyncButton
 
@@ -133,7 +123,7 @@ Simply put Async in front of your Button.
   ),
 ```
 
-Or use the AsyncButtonExtension:
+Or simply use the AsyncButtonExtension:
 
 ```dart
   ElevatedButton(
@@ -142,19 +132,36 @@ Or use the AsyncButtonExtension:
   ).async(),
 ```
 
-## Settings Global Config
-
-Use the static functions to set it wherever you want.
+Control them programatically with:
 
 ```dart
-    // You can set the default config of all AsyncButton's.
-    AsyncButton.setConfig(const AsyncButtonConfig());
+  Async.of(context).reload();
+  or
+  AsyncButton.of(context).longPress();
+```
 
-    // Or you can set the config of a specific AsyncButton.
-    AsyncElevatedButton.setConfig(const AsyncButtonConfig());
-    AsyncOutlinedButton.setConfig(const AsyncButtonConfig());
-    AsyncFilledButton.setConfig(const AsyncButtonConfig());
-    AsyncTextButton.setConfig(const AsyncButtonConfig());
+## Async widget
+
+Use async as scope to provide custom [AsyncConfig]:
+
+```dart
+    return Async(
+      config: AsyncConfig(
+        textButton: AsyncButtonConfig(
+          loader: (_) => const Text('loading'),
+        ),
+      ),
+```
+
+The [Async] widget comes with some other useful utilities too.
+
+```dart
+  Async(
+    init: () {} // smart init shows a loader on async, ignore on void.
+    dispose: () {} // same as widget.dispose()
+    reassemble: () {} // for reassembling services on hot reload
+    keepAlive: false // makes this widget always alive
+  )
 ```
 
 ### AsyncButtonConfig Properties
@@ -176,16 +183,10 @@ Use the static functions to set it wherever you want.
   final Curve styleCurve;
 
   /// The widget to show on loading.
-  final Widget Function(AsyncButtonState state) loader;
+  final WidgetBuilder loader;
 
   /// The widget to show on error.
-  final Widget Function(AsyncButtonState state) error;
-
-  /// The style to apply on loading.
-  final ButtonStyle Function(AsyncButtonState state) loadingStyle;
-
-  /// The style to apply on error.
-  final ButtonStyle Function(AsyncButtonState state) errorStyle;
+  final WidgetBuilder error;
 ```
 
 ## Future Plans and Development

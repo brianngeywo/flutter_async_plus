@@ -1,8 +1,5 @@
 part of 'async_button.dart';
 
-typedef AsyncWidgetBuilder = Widget Function(
-    BuildContext context, AsyncButtonController state);
-
 /// Class that defines [AsyncButton] states and styles.
 class AsyncButtonConfig {
   const AsyncButtonConfig({
@@ -33,12 +30,10 @@ class AsyncButtonConfig {
   final Curve styleCurve;
 
   /// The widget to show on loading.
-  final Widget Function(BuildContext context, AsyncButtonController state)
-      loader;
+  final WidgetBuilder loader;
 
   /// The widget to show on error.
-  final Widget Function(BuildContext context, AsyncButtonController state)
-      error;
+  final WidgetBuilder error;
 
   // /// The style to apply on loading.
   // final ButtonStyle? loadingStyle;
@@ -49,14 +44,16 @@ class AsyncButtonConfig {
 
 /// Class that defines [AsyncButton] loaders.
 mixin AsyncButtonLoaders {
-  static Widget spinner(BuildContext context, AsyncButtonController button) {
+  static Widget spinner(BuildContext context) {
+    final state = AsyncButton.of(context);
+
     return SizedBox.square(
-      dimension: button.size.height / 2,
+      dimension: state.size.height / 2,
       child: CircularProgressIndicator(
         strokeWidth: 2,
         color: () {
-          if (button.isOutlinedButton) return null;
-          if (button.isTextButton) return null;
+          if (state.isOutlinedButton) return null;
+          if (state.isTextButton) return null;
           return Theme.of(context).colorScheme.onPrimary;
         }(),
       ),
@@ -66,15 +63,16 @@ mixin AsyncButtonLoaders {
 
 /// Class that defines [AsyncButton] errors.
 mixin AsyncButtonErrors {
-  static Widget text(BuildContext context, AsyncButtonController controller) {
+  static Widget text(BuildContext context) {
+    final state = AsyncButton.of(context);
     return Text(
-      controller.errorMessage,
+      state.errorMessage,
       softWrap: false,
       overflow: TextOverflow.ellipsis,
     );
   }
 
-  static Widget icon(BuildContext context, AsyncButtonController controller) {
+  static Widget icon(BuildContext context) {
     final errorColor = Theme.of(context).colorScheme.error;
     return Icon(
       Icons.warning,

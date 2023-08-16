@@ -34,6 +34,6 @@ extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
 }
 
 extension AsyncButtonDuplicateExtension<T extends AsyncButton> on T {
-  @Deprecated("DUPLICATE, remove one")
+  @Deprecated('DUPLICATE, this widget is already an AsyncButton, remove one.')
   AsyncButton async() => this;
 }

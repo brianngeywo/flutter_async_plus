@@ -32,49 +32,65 @@ class _MainAppState extends State<MainApp> {
       throw 'Hello World!';
     }
 
-    // You can set the default config of all AsyncButton's.
-    AsyncButton.setConfig(const AsyncButtonConfig());
+    Future<void> loadTheme() async {
+      Theme;
+      await Future.delayed(const Duration(milliseconds: 300));
+      print('loadTheme');
+    }
 
-    // Or you can set the config of a specific AsyncButton.
-    AsyncElevatedButton.setConfig(const AsyncButtonConfig());
-    AsyncOutlinedButton.setConfig(const AsyncButtonConfig());
-    AsyncFilledButton.setConfig(const AsyncButtonConfig());
-    AsyncTextButton.setConfig(const AsyncButtonConfig());
+    Future<void> loadTranslation() async {
+      await Future.delayed(const Duration(milliseconds: 600));
+      print('loadTranslation');
+    }
 
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          color: Colors.grey[300],
-          child: Column(
-            children: [
-              ElevatedButton(
-                onPressed: onHello,
-                child: const Text('ElevatedButton'),
-              ).async(),
-              Builder(builder: (context) {
-                return AsyncBuilder(
-                    // controller: asc,
-                    listenables: [asc.loading],
-                    future: () async {
-                      await Future.delayed(const Duration(seconds: 3));
-                      // return 'Hello World!';
-                      throw ErrorHint('Omg, an error!');
-                    },
-                    error: (controller) {
-                      return FilledButton(
-                        onPressed: () async {
-                          await Future.delayed(const Duration(seconds: 1));
-                          throw ErrorHint('Omg, an error!');
-                        },
-                        child: const Text('reload'),
-                      ).async(listenables: [state]);
-                    },
-                    reloader: const FilledBlur(),
-                    builder: (data) {
-                      return const Text('lalala');
-                    });
-              }),
-            ],
+    Future<void> loadStorage() async {
+      await Future.delayed(const Duration(milliseconds: 900));
+      print('loadStorage');
+    }
+
+    return Async(
+      init: () => Future.wait([
+        loadTheme(),
+        loadTranslation(),
+        loadStorage(),
+        Future.delayed(const Duration(seconds: 1)),
+      ]),
+      loader: (_) => const Center(child: CircularProgressIndicator()),
+      child: MaterialApp(
+        home: Scaffold(
+          body: Container(
+            color: Colors.grey[300],
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: onHello,
+                  child: const Text('ElevatedButton'),
+                ).async(),
+                Builder(builder: (context) {
+                  return AsyncBuilder(
+                      // controller: asc,
+                      listenables: [asc.loading],
+                      getFuture: () async {
+                        await Future.delayed(const Duration(seconds: 3));
+                        // return 'Hello World!';
+                        throw ErrorHint('Omg, an error!');
+                      },
+                      error: (context, e, s) {
+                        return FilledButton(
+                          onPressed: () async {
+                            await Future.delayed(const Duration(seconds: 1));
+                            throw ErrorHint('Omg, an error!');
+                          },
+                          child: const Text('reload'),
+                        ).async(listenables: [state]);
+                      },
+                      reloader: (_) => const FilledBlur(),
+                      builder: (_, data) {
+                        return const Text('lalala');
+                      });
+                }),
+              ],
+            ),
           ),
         ),
       ),

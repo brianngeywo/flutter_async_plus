@@ -36,18 +36,6 @@ class AsyncControllerImpl<T> implements AsyncController<T> {
 
   @override
   FutureOr<void> reload() => Future.wait(_state.map((e) async => e.reload()));
-
-  @override
-  bool operator ==(Object other) {
-    print('identical: ');
-    // TODO: Verify didUpdateWidget, if is called when the controller changes.
-    if (identical(this, other)) return true;
-
-    return other is AsyncControllerImpl<T> && other.hashCode == state.hashCode;
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode ^ state.hashCode;
 }
 
 @protected
@@ -74,14 +62,6 @@ class AsyncButtonControllerImpl<T> extends AsyncControllerImpl<T>
   bool get isFilledButton => button.any((e) => e.isFilledButton);
   @override
   Size get size => button.first.size;
-
-  @override
-  bool operator ==(Object other) {
-    print('identical: ');
-    if (identical(this, other)) return true;
-
-    return other is AsyncControllerImpl<T> && other.state == state;
-  }
 }
 
 @protected
@@ -118,8 +98,12 @@ class AsyncBuilderControllerImpl<T> extends AsyncControllerImpl<T>
   FutureOr<void> cancel() => Future.wait(builder.map((e) async => e.cancel()));
 }
 
-extension AsyncControllerExtensijhoon on AsyncController {
+extension AsyncControllerExtension on AsyncController {
+  /// All [AsyncState] attached.
+  Set<AsyncState> get _state => (this as AsyncControllerImpl).state;
+
+  /// Attach the [state] to the controller.
   void attach(AsyncState state) {
-    (this as dynamic).state.add(state);
+    _state.add(state);
   }
 }

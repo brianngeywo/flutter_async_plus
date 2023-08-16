@@ -11,10 +11,10 @@ abstract class AsyncController<T> {
   /// The [AsyncController] for any [AsyncWidget].
   factory AsyncController() => AsyncControllerImpl();
 
-  /// The [AsyncFutureController] for [AsyncBuilder.future].
+  /// The [AsyncFutureController] for [AsyncBuilder.getFuture].
   static AsyncFutureController<T> future<T>() => AsyncBuilderControllerImpl();
 
-  /// The [AsyncStreamController] for [AsyncBuilder.stream].
+  /// The [AsyncStreamController] for [AsyncBuilder.getStream].
   static AsyncStreamController<T> stream<T>() => AsyncBuilderControllerImpl();
 
   /// The [AsyncButtonController] for [AsyncButton].
@@ -39,7 +39,7 @@ abstract class AsyncController<T> {
   ///
   /// Which is:
   ///
-  /// - [AsyncBuilder.future] or [AsyncBuilder.stream]
+  /// - [AsyncBuilder.getFuture] or [AsyncBuilder.getStream]
   /// - [AsyncButton.press]
   ///
   /// For a more granular control, use:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_async/flutter_async.dart';
 
-import 'async_button.dart';
 
 void main() => runApp(
       const MaterialApp(home: Scaffold(body: MyWidget())),
@@ -23,69 +23,65 @@ class MyWidget extends StatelessWidget {
     final message1 = ValueNotifier('');
     final message2 = ValueNotifier('');
 
-    return Theme(
-      data: ThemeData(
-        elevatedButtonTheme: const ElevatedButtonThemeData(
-          style: AsyncButtonStyle(
-            config: AsyncButtonConfig(),
-          ),
-        ),
-      ),
-      child: Transform.scale(
-        scale: 2,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AsyncElevatedButton(
-                onPressed: onPressed,
-                child: const Text('ElevatedButton'),
-              ),
-              AsyncElevatedButton(
-                config: AsyncButtonConfig(
-                  loader: (_, controller) {
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                      child: const Text(
-                        'state.loadingMessage',
-                        // key: ValueKey(state.loadingMessage),
-                      ),
-                    );
-                  },
-                ),
-                listenables: [
-                  loading1,
-                  loading2,
-                ],
-                onPressed: () async {
-                  await Future.delayed(const Duration(milliseconds: 900));
-                  message1.value = 'lets go';
-                  await Future.delayed(const Duration(milliseconds: 900));
-                  message2.value = 'yes';
-                  await Future.delayed(const Duration(milliseconds: 900));
-                  message1.value = 'boom';
-                  await Future.delayed(const Duration(milliseconds: 900));
-                  message2.value = 'lalala';
-                  await Future.delayed(const Duration(milliseconds: 900));
+    return Transform.scale(
+      scale: 2,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AsyncElevatedButton(
+              onPressed: onPressed,
+              child: const Text('ElevatedButton'),
+            ),
+            AsyncElevatedButton(
+              config: AsyncButtonConfig(
+                loader: (_) {
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                    child: const Text(
+                      'state.loadingMessage',
+                      // key: ValueKey(state.loadingMessage),
+                    ),
+                  );
                 },
-                child: const Text('OutlinedButton'),
               ),
-              AsyncTextButton(
-                onPressed: onPressed,
-                child: const Text('TextButton'),
+              listenables: [
+                loading1,
+                loading2,
+              ],
+              onPressed: () async {
+                await Future.delayed(const Duration(milliseconds: 900));
+                message1.value = 'lets go';
+                await Future.delayed(const Duration(milliseconds: 900));
+                message2.value = 'yes';
+                await Future.delayed(const Duration(milliseconds: 900));
+                message1.value = 'boom';
+                await Future.delayed(const Duration(milliseconds: 900));
+                message2.value = 'lalala';
+                await Future.delayed(const Duration(milliseconds: 900));
+              },
+              child: const Text('OutlinedButton'),
+            ).async(),
+            TextButton(
+              onPressed: onPressed,
+              child: const Text('TextButton'),
+            ).async(
+              config: AsyncButtonConfig(
+                loader: (context) => const CircularProgressIndicator(),
               ),
-              // AsyncFilledButton(
-              //   onPressed: onPressed,
-              //   child: const Text('FilledButton'),
-              // ),
-            ],
-          ),
+
+            ),
+            // AsyncFilledButton(
+            //   onPressed: onPressed,
+            //   child: const Text('FilledButton'),
+            // ),
+          ],
         ),
       ),
     );

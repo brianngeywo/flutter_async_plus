@@ -7,7 +7,6 @@ import '../async_state.dart';
 
 class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
     implements AsyncFutureController<T>, AsyncStreamController<T> {
-  
   @override
   void pause([resumeSignal]) {
     setState(() => _subscription?.pause(resumeSignal));
@@ -82,14 +81,14 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
   void _initAsync() {
     _error = _stackTrace = null;
 
-    if (widget.future != null) _initFuture();
-    if (widget.stream != null) _initStream();
+    if (widget.getFuture != null) _initFuture();
+    if (widget.getStream != null) _initStream();
   }
 
   void _initFuture() {
     loading.value = true;
 
-    widget.future!()
+    widget.getFuture!()
         .then(_setData, onError: _onError)
         .whenComplete(() => loading.value = false);
   }
@@ -98,7 +97,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
     loading.value = true;
 
     _subscription?.cancel();
-    _subscription = widget.stream!().listen(
+    _subscription = widget.getStream!().listen(
       _setData,
       onDone: () => loading.value = false,
       onError: _onError,
@@ -161,28 +160,32 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
 
   @override
   Widget build(BuildContext context) {
-    /// Stack inherits the size of the largest child.
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // On data.
-        if (_isDataSet && !hasError) widget.builder(dataOrThrow),
+    return Builder(builder: (context) {
+      /// Stack inherits the size of the largest child.
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          // On data.
+          if (_isDataSet && !hasError) widget.builder(context, dataOrThrow),
 
-        // On loading.
-        if (widget.loader != null)
-          KeepSize(visible: isLoading, child: widget.loader!),
+          // On loading.
+          if (widget.loader != null)
+            KeepSize(visible: isLoading, child: widget.loader!(context)),
 
-        // On reloading.
-        if (widget.reloader != null)
-          KeepSize(visible: isReloading, child: widget.reloader!),
+          // On reloading.
+          if (widget.reloader != null)
+            KeepSize(visible: isReloading, child: widget.reloader!(context)),
 
-        // On error.
-        if (widget.error != null)
-          KeepSize(visible: hasError, child: widget.error!(this)),
-      ],
-    );
+          // On error.
+          if (widget.error != null && hasError)
+            KeepSize(
+              visible: hasError,
+              child: widget.error!(context, error!, stackTrace),
+            ),
+        ],
+      );
+    });
   }
-
 }
 
 class KeepSize extends Visibility {

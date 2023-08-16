@@ -13,14 +13,8 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  void onPressed() async {
-    await Future.delayed(const Duration(seconds: 1));
-    // button1.reload();
-    // button2.reload();
-    // throw Exception('Error');
-  }
 
-  final button1 = AsyncController();
+  final button1 = AsyncController.future();
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +23,10 @@ class _MainAppState extends State<MainApp> {
         body: Center(
           child: AsyncBuilder(
               controller: button1,
-              future: () {
+              getFuture: () {
                 return Future.delayed(const Duration(seconds: 1), () => '');
               },
-              builder: (context) {
+              builder: (context, data) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -50,6 +44,7 @@ class _MainAppState extends State<MainApp> {
                     OutlinedButton(
                       onPressed: () async {
                         await Future.delayed(const Duration(seconds: 1));
+                        throw Exception('Error 1');
                       },
                       child: const Text('Hello World!'),
                     ).async(
@@ -58,12 +53,16 @@ class _MainAppState extends State<MainApp> {
                     FilledButton(
                       onPressed: () async {
                         await Future.delayed(const Duration(seconds: 1));
+                        throw Exception('Error 2');
+
                       },
                       child: const Text('Hello World!'),
                     ).async(controller: button1, listenables: []),
                     TextButton(
                       onPressed: () async {
                         await Future.delayed(const Duration(seconds: 1));
+                        throw Exception('Error 3');
+
                       },
                       child: const Text('Hello World!'),
                     ).async(

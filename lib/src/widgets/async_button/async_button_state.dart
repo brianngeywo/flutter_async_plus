@@ -16,20 +16,15 @@ class AsyncButtonState<T extends ButtonStyleButton>
 
   /// Resolves the default [AsyncButtonConfig] of this [T].
   AsyncButtonConfig? get _config {
-    final config = () {
-      if (isFilledButton) return AsyncFilledButton._config;
-      if (isOutlinedButton) return AsyncOutlinedButton._config;
-      if (isTextButton) return AsyncTextButton._config;
-      return AsyncElevatedButton._config;
-    }();
-
-    final theme = widget.themeStyleOf(context);
-    return config ?? (theme is AsyncButtonStyle ? theme.config : null);
+    if (isFilledButton) return AsyncConfig.of(context).filledButton;
+    if (isOutlinedButton) return AsyncConfig.of(context).outlinedButton;
+    if (isTextButton) return AsyncConfig.of(context).textButton;
+    return AsyncConfig.of(context).elevatedButton;
   }
 
   /// The current [AsyncButtonConfig] of this button.
   AsyncButtonConfig get config =>
-      widget.config ?? _config ?? AsyncButton.baseConfig;
+      widget.config ?? _config ?? const AsyncButtonConfig();
 
   late final errorColor = Theme.of(context).colorScheme.error;
 
@@ -93,11 +88,13 @@ class AsyncButtonState<T extends ButtonStyleButton>
 
     // Animated child.
     final child = animatedSize(
-      child: () {
-        if (hasError && hasSize) return config.error(context, this);
-        if (isLoading && hasSize) return config.loader(context, this);
-        return widget.child!;
-      }(),
+      child: Builder(
+        builder: (context) {
+          if (hasError && hasSize) return config.error(context);
+          if (isLoading && hasSize) return config.loader(context);
+          return widget.child!;
+        },
+      ),
     );
 
     return SizedBox.fromSize(

@@ -3,20 +3,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_async/src/widgets/async/async_config.dart';
 
 import '../../../flutter_async.dart';
 import '../animated_style_mixin.dart';
 
 part 'async_button_config.dart';
-part 'async_button_style.dart';
 part 'async_button_state.dart';
 
 class AsyncElevatedButton extends AsyncButton<ElevatedButton> {
-  static AsyncButtonConfig? _config;
-
-  /// The default [AsyncButtonConfig] for [AsyncElevatedButton].
-  static void setConfig(AsyncButtonConfig config) => _config = config;
-
   const AsyncElevatedButton({
     //Extended.
     super.config,
@@ -39,11 +34,6 @@ class AsyncElevatedButton extends AsyncButton<ElevatedButton> {
 }
 
 class AsyncOutlinedButton extends AsyncButton<OutlinedButton> {
-  static AsyncButtonConfig? _config;
-
-  /// The default [AsyncButtonConfig] for [AsyncOutlinedButton].
-  static void setConfig(AsyncButtonConfig config) => _config = config;
-
   const AsyncOutlinedButton({
     //Extended.
     super.config,
@@ -66,11 +56,6 @@ class AsyncOutlinedButton extends AsyncButton<OutlinedButton> {
 }
 
 class AsyncTextButton extends AsyncButton<TextButton> {
-  static AsyncButtonConfig? _config;
-
-  /// The default [AsyncButtonConfig] for [AsyncTextButton].
-  static void setConfig(AsyncButtonConfig config) => _config = config;
-
   const AsyncTextButton({
     //Extended.
     super.config,
@@ -93,10 +78,6 @@ class AsyncTextButton extends AsyncButton<TextButton> {
 }
 
 class AsyncFilledButton extends AsyncButton<FilledButton> {
-  static AsyncButtonConfig? _config;
-
-  /// The default [AsyncButtonConfig] for [AsyncFilledButton].
-  static void setConfig(AsyncButtonConfig config) => _config = config;
   const AsyncFilledButton({
     //Extended.
     super.config,

@@ -6,10 +6,6 @@ import '../async_state.dart';
 
 class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     implements AsyncWidget {
-  static var baseConfig = const AsyncButtonConfig();
-
-  /// The default [AsyncButtonConfig] of all RxButton's.
-  static void setConfig(AsyncButtonConfig config) => baseConfig = config;
 
   const AsyncButton({
     //Extended.
@@ -39,6 +35,18 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
 
   @override
   final List<ValueListenable<bool>> listenables;
+
+  /// Returns the [AsyncButtonState] of the nearest [AsyncButton] ancestor or null.
+  static AsyncButtonState? maybeOf(BuildContext context) {
+    return context.findRootAncestorStateOfType<AsyncButtonState>();
+  }
+
+  /// Returns the [AsyncButtonState] of the nearest [AsyncButton] ancestor or throw.
+  static AsyncButtonState of(BuildContext context) {
+    final state = maybeOf(context);
+    assert(state != null, 'AsyncButton not found');
+    return state!;
+  }
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {

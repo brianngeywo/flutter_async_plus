@@ -49,12 +49,14 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
   Duration? get errorDuration;
 
   /// Sets the loading state to [isLoading].
+  @protected
   void setLoading(bool isLoading) {
     loading.value = isLoading;
     widget.controller?.loading.value = isLoading;
   }
 
   /// Sets the error state to [hasError].
+  @protected
   void setError(bool hasError, [Object? error, StackTrace? stackTrace]) {
     setState(() {
       _hasError = hasError;
@@ -64,6 +66,7 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
   }
 
   /// Sets the [AsyncState] to [isLoading] or [hasError] and calls [action].
+  @protected
   Future<void> setAction(FutureOr<void> action(),
       [Duration? errorDuration]) async {
     if (isLoading) return debugPrint('AsyncState is already loading.');
@@ -80,7 +83,7 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
     }
   }
 
-  void listener() {
+  void _listener() {
     if (widget.listenables.isEmpty) return;
     setLoading(widget.listenables.any((l) => l.value));
   }
@@ -98,7 +101,7 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
 
   @override
   void didChangeDependencies() {
-    Listenable.merge(widget.listenables).addListener(listener);
+    Listenable.merge(widget.listenables).addListener(_listener);
     loading.addListener(() => setState(() {}));
     super.didChangeDependencies();
   }
@@ -109,23 +112,23 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
       widget.controller?.attach(this);
     }
     if (widget.listenables != oldWidget.listenables) {
-      Listenable.merge(oldWidget.listenables).removeListener(listener);
-      Listenable.merge(widget.listenables).addListener(listener);
-      listener();
+      Listenable.merge(oldWidget.listenables).removeListener(_listener);
+      Listenable.merge(widget.listenables).addListener(_listener);
+      _listener();
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void reassemble() {
-    listener();
+    _listener();
     super.reassemble();
   }
 
   @override
   void dispose() {
     loading.dispose();
-    Listenable.merge(widget.listenables).removeListener(listener);
+    Listenable.merge(widget.listenables).removeListener(_listener);
     super.dispose();
   }
 }
