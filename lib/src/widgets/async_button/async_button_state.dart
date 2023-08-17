@@ -105,7 +105,7 @@ class AsyncButtonState<T extends ButtonStyleButton>
         if (isFilledButton) return FilledButton.new;
         return ElevatedButton.new;
       }()(
-        key: widget.key,
+        // key: widget.key,
         onPressed: widget.onPressed != null ? press : null,
         onLongPress: widget.onLongPress != null ? longPress : null,
         onHover: widget.onHover,
