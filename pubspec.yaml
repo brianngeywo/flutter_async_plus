@@ -1,6 +1,6 @@
 name: flutter_async
 description: Handle async tasks with ease through automatic loading, error handling, and native widget integration.
-version: 0.3.1
+version: 0.4.1
 homepage: https://www.branvier.com
 
 environment:

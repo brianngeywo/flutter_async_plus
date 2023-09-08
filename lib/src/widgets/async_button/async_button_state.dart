@@ -90,7 +90,9 @@ class AsyncButtonState<T extends ButtonStyleButton>
     final child = animatedSize(
       child: Builder(
         builder: (context) {
-          if (hasError && hasSize) return config.error(context);
+          if (hasError && hasSize) {
+            return config.error(context, error!, stackTrace);
+          }
           if (isLoading && hasSize) return config.loader(context);
           return widget.child!;
         },

@@ -8,8 +8,8 @@ class AsyncButtonConfig {
     this.errorDuration = const Duration(seconds: 3),
     this.styleDuration = const Duration(seconds: 1),
     this.styleCurve = Curves.fastOutSlowIn,
-    this.loader = AsyncButtonLoaders.spinner,
-    this.error = AsyncButtonErrors.text,
+    this.loader = AsyncButton.inheritedLoader,
+    this.error = AsyncButton.inheritedError,
     // this.loadingStyle,
     // this.errorStyle,
   });
@@ -33,7 +33,7 @@ class AsyncButtonConfig {
   final WidgetBuilder loader;
 
   /// The widget to show on error.
-  final WidgetBuilder error;
+  final ErrorBuilder error;
 
   // /// The style to apply on loading.
   // final ButtonStyle? loadingStyle;
@@ -63,7 +63,8 @@ mixin AsyncButtonLoaders {
 
 /// Class that defines [AsyncButton] errors.
 mixin AsyncButtonErrors {
-  static Widget text(BuildContext context) {
+  static Widget text(
+      BuildContext context, Object error, StackTrace? stackTrace) {
     final state = AsyncButton.of(context);
     return Text(
       state.errorMessage,
@@ -72,7 +73,8 @@ mixin AsyncButtonErrors {
     );
   }
 
-  static Widget icon(BuildContext context) {
+  static Widget icon(
+      BuildContext context, Object error, StackTrace? stackTrace) {
     final errorColor = Theme.of(context).colorScheme.error;
     return Icon(
       Icons.warning,

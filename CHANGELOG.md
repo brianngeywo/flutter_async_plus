@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - Sep 7, 2023
+
+### Added
+
+- AsyncObserver for analytics with all possible states within all [AsyncWidget] actions in this package.
+- AsyncObserver.onActionInit
+- AsyncObserver.onActionStart
+- AsyncObserver.onActionInsist
+- AsyncObserver.onActionSuccess
+- AsyncObserver.onActionError
+
+- AsyncConfig.buttonLoader that applies to all [AsyncButton] if [AsyncButtonConfig] is not set.
+- AsyncConfig.buttonError that applies to all [AsyncButton] if [AsyncButtonConfig] is not set.
+
 ## [0.3.1] - Aug 17, 2023
 
 ### Fix
@@ -37,9 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Breaking change: AsyncBuilder now has one single constructor.
-
 - AsyncBuilder.future, renamed to -> AsyncBuilder.getFuture.
-
 - AsyncBuilder.stream, renamed to -> AsyncBuilder.getStream.
 
 ## [0.1.0] - Jul 10, 2023

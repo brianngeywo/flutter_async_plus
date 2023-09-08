@@ -67,7 +67,7 @@ class MyWidget extends StatelessWidget {
                 await Future.delayed(const Duration(milliseconds: 900));
               },
               child: const Text('OutlinedButton'),
-            ).async(),
+            ),
             TextButton(
               onPressed: onPressed,
               child: const Text('TextButton'),

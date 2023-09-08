@@ -6,7 +6,6 @@ import '../async_state.dart';
 
 class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     implements AsyncWidget {
-
   const AsyncButton({
     //Extended.
     this.config,
@@ -46,6 +45,14 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     final state = maybeOf(context);
     assert(state != null, 'AsyncButton not found');
     return state!;
+  }
+
+  static Widget inheritedError(BuildContext context, Object e, StackTrace? s) {
+    return Async.of(context).config.buttonError.call(context, e, s);
+  }
+
+  static Widget inheritedLoader(BuildContext context) {
+    return Async.of(context).config.buttonLoader.call(context);
   }
 
   @override

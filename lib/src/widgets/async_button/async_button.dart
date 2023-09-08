@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_async/src/widgets/async/async_config.dart';
 
 import '../../../flutter_async.dart';
 import '../animated_style_mixin.dart';

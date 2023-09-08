@@ -6,7 +6,34 @@ import 'package:flutter_async/flutter_async.dart';
 import 'package:flutter_async/src/widgets/animated_style_mixin.dart';
 import 'package:flutter_async/src/widgets/async_state.dart';
 
-import 'async_config.dart';
+typedef AsyncStateCallback = void Function(AsyncState state);
+
+/// Every [AsyncWidget] in this package extends [AsyncState].
+///
+/// So you can consistently observe the state of any [AsyncWidget] in your app.
+class AsyncObserver {
+  static AsyncStateCallback? init;
+  static AsyncStateCallback? start;
+  static AsyncStateCallback? insist;
+  static AsyncStateCallback? success;
+  static AsyncStateCallback? error;
+  static AsyncStateCallback? loading;
+
+  /// Called when an [AsyncWidget] action inits.
+  static void onActionInit(AsyncStateCallback fn) => init = fn;
+
+  /// Called when an [AsyncWidget] starts computing/loading.
+  static void onActionStart(AsyncStateCallback fn) => start = fn;
+
+  /// Called when an [AsyncWidget] is called but already started.
+  static void onActionInsist(AsyncStateCallback fn) => insist = fn;
+
+  /// Called when an [AsyncWidget] action finishes with success.
+  static void onActionSuccess(AsyncStateCallback fn) => success = fn;
+
+  /// Called when an [AsyncWidget] action finishes with error.
+  static void onActionError(AsyncStateCallback fn) => error = fn;
+}
 
 typedef ErrorBuilder = Widget Function(
   BuildContext context,

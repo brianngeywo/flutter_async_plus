@@ -35,17 +35,14 @@ class _MainAppState extends State<MainApp> {
     Future<void> loadTheme() async {
       Theme;
       await Future.delayed(const Duration(milliseconds: 300));
-      print('loadTheme');
     }
 
     Future<void> loadTranslation() async {
       await Future.delayed(const Duration(milliseconds: 600));
-      print('loadTranslation');
     }
 
     Future<void> loadStorage() async {
       await Future.delayed(const Duration(milliseconds: 900));
-      print('loadStorage');
     }
 
     return Async(

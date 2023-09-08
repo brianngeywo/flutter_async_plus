@@ -5,12 +5,16 @@ import '../../../flutter_async.dart';
 
 class AsyncConfig {
   const AsyncConfig({
+    this.buttonLoader = AsyncButtonLoaders.spinner,
+    this.buttonError = AsyncButtonErrors.text,
     this.elevatedButton,
     this.filledButton,
     this.textButton,
     this.outlinedButton,
   });
 
+  final WidgetBuilder buttonLoader;
+  final ErrorBuilder buttonError;
   final AsyncButtonConfig? elevatedButton;
   final AsyncButtonConfig? filledButton;
   final AsyncButtonConfig? textButton;

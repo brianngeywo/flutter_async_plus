@@ -69,12 +69,27 @@ abstract class AsyncState<W extends AsyncWidget<T>, T> extends State<W>
   @protected
   Future<void> setAction(FutureOr<void> action(),
       [Duration? errorDuration]) async {
-    if (isLoading) return debugPrint('AsyncState is already loading.');
+
+    AsyncObserver.init?.call(this);
+
+    if (isLoading) {
+      AsyncObserver.insist?.call(this);
+      return debugPrint('AsyncState is already loading.');
+    }
+
+    AsyncObserver.start?.call(this);
+
     try {
       setLoading(true);
       await action(); // * <-- The action is called here.
+
+      AsyncObserver.success?.call(this);
+
     } catch (e, s) {
       setError(true, e, s);
+
+      AsyncObserver.error?.call(this);
+      
       final duration = errorDuration ?? this.errorDuration;
       if (duration != null) await Future.delayed(duration);
     } finally {
