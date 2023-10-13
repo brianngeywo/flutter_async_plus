@@ -1,20 +1,40 @@
 // ignore_for_file: use_function_type_syntax_for_parameters
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_async/src/widgets/async_state.dart';
 
-import '../../async_controller.dart';
 import '../async/inherited_async.dart';
 import 'async_state.dart';
 
 /// A widget that builds depending on the state of a [Future] or [Stream].
-class AsyncBuilder<T> extends StatefulWidget implements AsyncWidget<T> {
+class AsyncBuilder<T> extends AsyncWidget<T> {
   /// Creates a widget that builds depending on the state of a [Future] or [Stream].
   const AsyncBuilder({
     super.key,
-    this.controller,
-    this.listenables = const [],
+    super.listenables = const [],
+    this.init,
+    this.dispose,
+    this.initialData,
+    this.future,
+    this.stream,
+    this.error = Async.inheritedError,
+    this.loader = Async.inheritedLoader,
+    this.reloader = Async.inheritedReloader,
+    required this.builder,
+  })  : getFuture = null,
+        getStream = null,
+        interval = null,
+        retry = 0,
+        assert(future == null || stream == null,
+            'Cannot provide both a future and a stream'),
+        super(controller: null);
+
+  const AsyncBuilder.function({
+    super.key,
+    super.controller,
+    super.listenables = const [],
+    this.init,
+    this.dispose,
     this.initialData,
     this.getFuture,
     this.getStream,
@@ -24,16 +44,25 @@ class AsyncBuilder<T> extends StatefulWidget implements AsyncWidget<T> {
     this.loader = Async.inheritedLoader,
     this.reloader = Async.inheritedReloader,
     required this.builder,
-  }) : assert(getFuture == null || getStream == null,
+  })  : future = null,
+        stream = null,
+        assert(getFuture == null || getStream == null,
             'Cannot provide both a getFuture and a getStream');
 
-  @override
-  final List<ValueListenable<bool>> listenables;
-  @override
-  final AsyncController<T>? controller;
+  /// [AsyncState.initState] callback.
+  final VoidCallback? init;
+
+  /// [AsyncState.dispose] callback.
+  final VoidCallback? dispose;
 
   /// The initial data to pass to the [builder].
   final T? initialData;
+
+  /// The [Future] to load [builder] with. When set, [stream] must be null.
+  final Future<T>? future;
+
+  /// The [Stream] to load [builder] with. When set, [future] must be null.
+  final Stream<T>? stream;
 
   /// The [Future] to load [builder] with. When set, [getStream] must be null.
   final Future<T> Function()? getFuture;

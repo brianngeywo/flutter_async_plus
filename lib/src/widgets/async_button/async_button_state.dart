@@ -23,8 +23,7 @@ class AsyncButtonState<T extends ButtonStyleButton>
   }
 
   /// The current [AsyncButtonConfig] of this button.
-  AsyncButtonConfig get config =>
-      widget.config ?? _config ?? const AsyncButtonConfig();
+  late final config = widget.config ?? _config ?? const AsyncButtonConfig();
 
   late final errorColor = Theme.of(context).colorScheme.error;
 
@@ -46,18 +45,19 @@ class AsyncButtonState<T extends ButtonStyleButton>
   );
 
   late final loadingStyle = baseStyle.copyWith(
-      padding: const MaterialStatePropertyAll(EdgeInsets.zero));
+      // padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+      );
 
   @override
-  AsyncStyle<ButtonStyle> get asyncStyle => AsyncStyle(
-        baseStyle: baseStyle,
-        errorStyle: errorStyle,
-        loadingStyle: loadingStyle,
-        errorDuration: config.errorDuration,
-        styleDuration: config.styleDuration,
-        styleCurve: config.styleCurve,
-        lerp: ButtonStyle.lerp,
-      );
+  late final asyncStyle = AsyncStyle(
+    baseStyle: baseStyle,
+    errorStyle: errorStyle,
+    loadingStyle: loadingStyle,
+    errorDuration: config.errorDuration,
+    styleDuration: config.styleDuration,
+    styleCurve: config.styleCurve,
+    lerp: ButtonStyle.lerp,
+  );
 
   /// The child of this button.
   Widget get child => widget.child!;

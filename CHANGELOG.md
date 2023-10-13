@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - Oct 10, 2023
+
+### Added
+
+New feature: `AsyncNotifier` and `AsyncListenable`, extension wrappers over `ValueNotifier` and `ValueListenable` with:
+
+- Setters: `future` and `stream` in addition to `value`, set the internal `AsyncSnapshot`, notifying events just like any Future/Stream builder.
+- Getters: Access async states through `snapshot` and the computations through `future` and `stream`.
+- Extensions: Access `isLoading`, `isReloading`, `hasError` and more getters at any time.
+- Callbacks: Constructor property `onChanged` is called on `value` changes. Useful for side effects.
+
+This feature greatly reduces boilerplate so you don't have to handle all async states manually.
+
+### Changed
+
+Some changes were made to better follow Effective Dart style and also improve developer experience:
+
+- Deprecated .async() extensions. Use .asAsync() instead.
+- Updated naming conventions on all AsyncWidget.
+
+All deprecations will be removed in [0.7.0].
+
+## [0.5.2] - Sep 27, 2023
+
+### Added
+
+- Added `init` and `dispose` callbacks to `AsyncBuilder`.
+- Breaking Change: New AsyncBuilder base constructor for simple future/stream objects.
+- Breaking Change: New AsyncBuilder.function for managed getFuture/getStream objects.
+
+## [0.4.2] - Sep 19, 2023
+
+### Changed
+
+- Refactor: Using late final instead of getters in [AsyncButtonState].
+
 ## [0.4.1] - Sep 7, 2023
 
 ### Added

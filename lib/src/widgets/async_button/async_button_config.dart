@@ -47,16 +47,13 @@ mixin AsyncButtonLoaders {
   static Widget spinner(BuildContext context) {
     final state = AsyncButton.of(context);
 
-    return SizedBox.square(
-      dimension: state.size.height / 2,
-      child: CircularProgressIndicator(
-        strokeWidth: 2,
-        color: () {
-          if (state.isOutlinedButton) return null;
-          if (state.isTextButton) return null;
-          return Theme.of(context).colorScheme.onPrimary;
-        }(),
-      ),
+    return CircularProgressIndicator(
+      strokeWidth: 2,
+      color: () {
+        if (state.isOutlinedButton) return null;
+        if (state.isTextButton) return null;
+        return Theme.of(context).colorScheme.onPrimary;
+      }(),
     );
   }
 }

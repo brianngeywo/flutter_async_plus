@@ -19,7 +19,7 @@ class MyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AsyncBuilder(
+    return AsyncBuilder.function(
         getFuture: getNames,
         builder: (context, data) {
           return const Placeholder();

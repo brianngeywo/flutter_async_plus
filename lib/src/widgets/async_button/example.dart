@@ -71,7 +71,7 @@ class MyWidget extends StatelessWidget {
             TextButton(
               onPressed: onPressed,
               child: const Text('TextButton'),
-            ).async(
+            ).asAsync(
               config: AsyncButtonConfig(
                 loader: (context) => const CircularProgressIndicator(),
               ),

@@ -81,11 +81,33 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
   void _initAsync() {
     _error = _stackTrace = null;
 
-    if (widget.getFuture != null) _initFuture();
-    if (widget.getStream != null) _initStream();
+    if (widget.future != null) _initFuture();
+    if (widget.stream != null) _initStream();
+
+    if (widget.getFuture != null) _initGetFuture();
+    if (widget.getStream != null) _initGetStream();
   }
 
   void _initFuture() {
+    loading.value = true;
+
+    widget.future!
+        .then(_setData, onError: _onError)
+        .whenComplete(() => loading.value = false);
+  }
+
+  void _initStream() {
+    loading.value = true;
+
+    _subscription?.cancel();
+    _subscription = widget.stream!.listen(
+      _setData,
+      onDone: () => loading.value = false,
+      onError: _onError,
+    );
+  }
+
+  void _initGetFuture() {
     loading.value = true;
 
     widget.getFuture!()
@@ -93,7 +115,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
         .whenComplete(() => loading.value = false);
   }
 
-  void _initStream() {
+  void _initGetStream() {
     loading.value = true;
 
     _subscription?.cancel();
@@ -106,6 +128,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
 
   @override
   void initState() {
+    widget.init?.call();
     super.initState();
 
     if (widget.initialData != null) _setData(widget.initialData);
@@ -118,6 +141,9 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
   void didUpdateWidget(AsyncBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    if (widget.future != oldWidget.future) _initAsync();
+    if (widget.stream != oldWidget.stream) _initAsync();
+
     if (widget.initialData != oldWidget.initialData) {
       _setData(widget.initialData);
     }
@@ -126,6 +152,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
 
   @override
   void dispose() {
+    widget.dispose?.call();
     timer?.cancel();
     _subscription?.cancel();
     super.dispose();

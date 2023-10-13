@@ -7,7 +7,7 @@ import '../flutter_async.dart';
 
 extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
   /// The Async version of this [ButtonStyleButton].
-  AsyncButton<T> async({
+  AsyncButton<T> asAsync({
     List<ValueListenable<bool>> listenables = const [],
     AsyncController? controller,
     AsyncButtonConfig? config,
@@ -31,9 +31,24 @@ extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
         statesController: statesController,
         child: child!,
       );
+
+  @Deprecated('use asAsync() instead.')
+  AsyncButton<T> async({
+    List<ValueListenable<bool>> listenables = const [],
+    AsyncController? controller,
+    AsyncButtonConfig? config,
+  }) =>
+      asAsync(
+        listenables: listenables,
+        controller: controller,
+        config: config,
+      );
 }
 
 extension AsyncButtonDuplicateExtension<T extends AsyncButton> on T {
   @Deprecated('DUPLICATE, this widget is already an AsyncButton, remove one.')
   AsyncButton async() => this;
+
+  @Deprecated('DUPLICATE, this widget is already an AsyncButton, remove one.')
+  AsyncButton asAsync() => this;
 }
