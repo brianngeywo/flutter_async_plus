@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_async/flutter_async.dart';
-import 'package:flutter_async/src/async_controller_impl.dart';
 
+import '../flutter_async.dart';
+import 'async_controller_impl.dart';
 import 'widgets/async_state.dart';
 
 abstract class AsyncController<T> {
@@ -113,11 +113,12 @@ abstract class AsyncStreamController<T> extends AsyncController<T> {
   bool get isReloading;
 }
 
-extension AsyncControllerExtension on AsyncController {
-  /// The [Exception.message], [Error.message] or [Object.toString].
+extension AsyncControllerExtension<T> on AsyncController<T> {
+  /// The message in [Error], [Exception] or [Object.toString].
   String get errorMessage {
     try {
-      return (error as dynamic).message;
+      // ignore: avoid_dynamic_calls
+      return (error as dynamic).message as String;
     } catch (_) {
       return '$error';
     }

@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_async/flutter_async.dart';
+import '../../../flutter_async.dart';
 
 import '../async_state.dart';
 
 class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
     implements AsyncFutureController<T>, AsyncStreamController<T> {
   @override
-  void pause([resumeSignal]) {
+  void pause([Future<void>? resumeSignal]) {
     setState(() => _subscription?.pause(resumeSignal));
   }
 
@@ -29,10 +29,10 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
   }
 
   T? _data;
-  Timer? timer;
+  Timer? _timer;
   Object? _error;
   StackTrace? _stackTrace;
-  StreamSubscription? _subscription;
+  StreamSubscription<T>? _subscription;
   var _retry = 0;
   var _isDataSet = false;
 
@@ -53,10 +53,10 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
 
   void _setInterval(Duration? interval) {
     _retry = 0;
-    timer?.cancel();
+    _timer?.cancel();
 
     if (interval == null) return;
-    timer = Timer.periodic(interval, (_) => _initAsync());
+    _timer = Timer.periodic(interval, (_) => _initAsync());
   }
 
   void _onError(Object error, StackTrace stackTrace) {
@@ -70,12 +70,14 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
       });
     }
 
-    FlutterError.reportError(FlutterErrorDetails(
-      exception: error,
-      stack: stackTrace,
-      library: 'AsyncBuilder',
-      context: ErrorDescription('while building AsyncBuilder<$T>'),
-    ));
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: error,
+        stack: stackTrace,
+        library: 'AsyncBuilder',
+        context: ErrorDescription('while building AsyncBuilder<$T>'),
+      ),
+    );
   }
 
   void _initAsync() {
@@ -100,11 +102,11 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
     loading.value = true;
 
     _subscription?.cancel();
-    _subscription = widget.stream!.listen(
-      _setData,
-      onDone: () => loading.value = false,
-      onError: _onError,
-    );
+    _subscription = widget.stream!.asBroadcastStream().listen(
+          _setData,
+          onDone: () => loading.value = false,
+          onError: _onError,
+        );
   }
 
   void _initGetFuture() {
@@ -153,7 +155,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
   @override
   void dispose() {
     widget.dispose?.call();
-    timer?.cancel();
+    _timer?.cancel();
     _subscription?.cancel();
     super.dispose();
   }
@@ -187,47 +189,47 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T>
 
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context) {
-      /// Stack inherits the size of the largest child.
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          // On data.
-          if (_isDataSet && !hasError) widget.builder(context, dataOrThrow),
+    return Builder(
+      builder: (context) {
+        /// Stack inherits the size of the largest child.
+        print('widget.reloader : ${widget.reloader}');
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // On data.
+            if (_isDataSet && !hasError) widget.builder(context, dataOrThrow),
 
-          // On loading.
-          if (widget.loader != null)
-            KeepSize(visible: isLoading, child: widget.loader!(context)),
+            // On loading.
+            if (widget.loader != null)
+              Reveal(visible: isLoading, child: widget.loader!(context)),
 
-          // On reloading.
-          if (widget.reloader != null)
-            KeepSize(visible: isReloading, child: widget.reloader!(context)),
+            // On reloading.
+            if (widget.reloader != null)
+              Reveal(visible: isReloading, child: widget.reloader!(context)),
 
-          // On error.
-          if (widget.error != null && hasError)
-            KeepSize(
-              visible: hasError,
-              child: widget.error!(context, error!, stackTrace),
-            ),
-        ],
-      );
-    });
+            // On error.
+            if (widget.error != null && hasError)
+              Reveal(
+                visible: hasError,
+                child: widget.error!(context, error!, stackTrace!),
+              ),
+          ],
+        );
+      },
+    );
   }
 }
 
-class KeepSize extends Visibility {
-  const KeepSize({
-    Key? key,
-    bool visible = false,
-    required Widget child,
+class Reveal extends Visibility {
+  const Reveal({
+    super.key,
+    super.visible,
+    required super.child,
   }) : super(
-          key: key,
-          visible: visible,
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
           maintainInteractivity: false,
           maintainSemantics: false,
-          child: child,
         );
 }

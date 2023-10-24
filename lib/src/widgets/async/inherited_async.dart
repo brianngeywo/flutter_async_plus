@@ -38,7 +38,11 @@ class AsyncObserver {
 typedef ErrorBuilder = Widget Function(
   BuildContext context,
   Object error,
-  StackTrace? stackTrace,
+  StackTrace stackTrace,
+);
+typedef DataBuilder<T> = Widget Function(
+  BuildContext context,
+  T data,
 );
 
 /// Utility widget that handles void async taks, lifecycle and inherited builders.
@@ -105,7 +109,7 @@ class Async extends StatefulWidget {
     return state!;
   }
 
-  static Widget inheritedError(BuildContext context, Object e, StackTrace? s) {
+  static Widget inheritedError(BuildContext context, Object e, StackTrace s) {
     return Async.maybeOf(context)?.scope?.error?.call(context, e, s) ??
         Text(e.toString());
   }

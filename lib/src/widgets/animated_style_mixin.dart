@@ -2,19 +2,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_async/src/widgets/async_state.dart';
+import 'async_state.dart';
 
 class AsyncStyle<T> {
-  // Styles.
-  final T baseStyle;
-  final T errorStyle;
-  final T loadingStyle;
-
-  // Animation.
-  final Duration? styleDuration;
-  final Duration? errorDuration;
-  final Curve styleCurve;
-  final LerpCallback<T> lerp;
 
   const AsyncStyle({
     required this.baseStyle,
@@ -25,6 +15,16 @@ class AsyncStyle<T> {
     this.styleCurve = Curves.fastOutSlowIn,
     required this.lerp,
   });
+  // Styles.
+  final T baseStyle;
+  final T errorStyle;
+  final T loadingStyle;
+
+  // Animation.
+  final Duration? styleDuration;
+  final Duration? errorDuration;
+  final Curve styleCurve;
+  final LerpCallback<T> lerp;
 }
 
 abstract class AsyncStyleState<W extends AsyncWidget<T>, T, S>
@@ -94,7 +94,7 @@ mixin AnimatedStyleMixin<W extends StatefulWidget, S>
   void setStyle(S newStyle) {
     _style = lerp.tween(_style?.value, newStyle).animate(_curve);
 
-    if (mounted && hasSize) _ac.forward(from: 0.0);
+    if (mounted && hasSize) _ac.forward(from: 0);
   }
 
   WidgetsBinding? get _binding => WidgetsBinding.instance;
@@ -123,22 +123,23 @@ class UniversalTween<T extends Object> extends Tween<T> {
 
   @override
   T lerp(double t) {
-    dynamic begin = this.begin;
-    dynamic end = this.end;
+    final dynamic begin = this.begin;
+    final dynamic end = this.end;
 
     if (begin is EdgeInsets && end is EdgeInsets) {
-      return EdgeInsets.lerp(begin, end, t) as T;
+      return EdgeInsets.lerp(begin, end, t)! as T;
     } else if (begin is Color && end is Color) {
-      return Color.lerp(begin, end, t) as T;
+      return Color.lerp(begin, end, t)! as T;
     } else if (begin is Rect && end is Rect) {
-      return Rect.lerp(begin, end, t) as T;
+      return Rect.lerp(begin, end, t)! as T;
     } else if (begin is Size && end is Size) {
-      return Size.lerp(begin, end, t) as T;
+      return Size.lerp(begin, end, t)! as T;
     } else if (begin is double && end is double) {
       return (begin + (end - begin) * t) as T;
     } else {
       throw ArgumentError(
-          'Cannot interpolate between values of type ${begin.runtimeType}.');
+        'Cannot interpolate between values of type ${begin.runtimeType}.',
+      );
     }
   }
 }
@@ -158,11 +159,11 @@ class LerpTween<T> extends Tween<T> {
 
 class SelectTween<T extends Object> extends Tween<T> {
   SelectTween({
-    required T begin,
-    required T? end,
+    required T super.begin,
+    required super.end,
     required this.select,
     required this.adapter,
-  }) : super(begin: begin, end: end);
+  });
 
   final List<Object> Function(T data) select;
   final T Function(List values) adapter;

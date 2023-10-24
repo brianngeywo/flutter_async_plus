@@ -61,7 +61,10 @@ mixin AsyncButtonLoaders {
 /// Class that defines [AsyncButton] errors.
 mixin AsyncButtonErrors {
   static Widget text(
-      BuildContext context, Object error, StackTrace? stackTrace) {
+    BuildContext context,
+    Object error,
+    StackTrace? stackTrace,
+  ) {
     final state = AsyncButton.of(context);
     return Text(
       state.errorMessage,
@@ -71,7 +74,10 @@ mixin AsyncButtonErrors {
   }
 
   static Widget icon(
-      BuildContext context, Object error, StackTrace? stackTrace) {
+    BuildContext context,
+    Object error,
+    StackTrace? stackTrace,
+  ) {
     final errorColor = Theme.of(context).colorScheme.error;
     return Icon(
       Icons.warning,

@@ -1,9 +1,9 @@
 // ignore_for_file: use_function_type_syntax_for_parameters
 
 import 'package:flutter/material.dart';
-import 'package:flutter_async/src/widgets/async_state.dart';
 
 import '../async/inherited_async.dart';
+import '../async_state.dart';
 import 'async_state.dart';
 
 /// A widget that builds depending on the state of a [Future] or [Stream].
@@ -26,7 +26,8 @@ class AsyncBuilder<T> extends AsyncWidget<T> {
         interval = null,
         retry = 0,
         assert(future == null || stream == null,
-            'Cannot provide both a future and a stream'),
+          'Cannot provide both a future and a stream',
+        ),
         super(controller: null);
 
   const AsyncBuilder.function({
@@ -47,7 +48,8 @@ class AsyncBuilder<T> extends AsyncWidget<T> {
   })  : future = null,
         stream = null,
         assert(getFuture == null || getStream == null,
-            'Cannot provide both a getFuture and a getStream');
+          'Cannot provide both a getFuture and a getStream',
+        );
 
   /// [AsyncState.initState] callback.
   final VoidCallback? init;

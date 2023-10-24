@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_async/flutter_async.dart';
 
+import '../../../flutter_async.dart';
 import '../async_state.dart';
 
 class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
@@ -47,7 +47,7 @@ class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
     return state!;
   }
 
-  static Widget inheritedError(BuildContext context, Object e, StackTrace? s) {
+  static Widget inheritedError(BuildContext context, Object e, StackTrace s) {
     return Async.of(context).config.buttonError.call(context, e, s);
   }
 

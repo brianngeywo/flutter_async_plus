@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../flutter_async.dart';
 
+
 extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
   /// The Async version of this [ButtonStyleButton].
   AsyncButton<T> asAsync({
@@ -29,7 +30,7 @@ extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
         onPressed: onPressed,
         style: style,
         statesController: statesController,
-        child: child!,
+        child: child,
       );
 
   @Deprecated('use asAsync() instead.')

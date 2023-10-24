@@ -91,7 +91,7 @@ class AsyncButtonState<T extends ButtonStyleButton>
       child: Builder(
         builder: (context) {
           if (hasError && hasSize) {
-            return config.error(context, error!, stackTrace);
+            return config.error(context, error!, stackTrace!);
           }
           if (isLoading && hasSize) return config.loader(context);
           return widget.child!;

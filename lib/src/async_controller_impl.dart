@@ -10,9 +10,9 @@ import 'widgets/async_state.dart';
 
 @protected
 class AsyncControllerImpl<T> implements AsyncController<T> {
-  final state = <AsyncState>{};
+  final state = <AsyncState<AsyncWidget<T>, T>>{};
 
-  Set<AsyncState> get _state {
+  Set<AsyncState<AsyncWidget<T>, T>> get _state {
     assert(state.isNotEmpty, 'AsyncController not attached to any AsyncWidget');
     return state;
   }
@@ -67,7 +67,7 @@ class AsyncButtonControllerImpl<T> extends AsyncControllerImpl<T>
 @protected
 class AsyncBuilderControllerImpl<T> extends AsyncControllerImpl<T>
     implements AsyncStreamController<T>, AsyncFutureController<T> {
-  Set<AsyncBuilderState> get builder {
+  Set<AsyncBuilderState<Object?>> get builder {
     final l = state.whereType<AsyncBuilderState>();
     assert(l.isNotEmpty, 'AsyncController not attached to any AsyncBuilder');
     return l.toSet();
@@ -85,11 +85,12 @@ class AsyncBuilderControllerImpl<T> extends AsyncControllerImpl<T>
   @override
   T? get data {
     if (!hasData) return null;
-    return builder.firstWhere((e) => e.hasData).data;
+    return builder.firstWhere((e) => e.hasData).data as T?;
   }
 
   @override
-  void pause([resumeSignal]) => builder.forEach((e) => e.pause(resumeSignal));
+  void pause([Future<void>? resumeSignal]) =>
+      builder.forEach((e) => e.pause(resumeSignal));
 
   @override
   void resume() => builder.forEach((e) => e.resume());
@@ -98,12 +99,13 @@ class AsyncBuilderControllerImpl<T> extends AsyncControllerImpl<T>
   FutureOr<void> cancel() => Future.wait(builder.map((e) async => e.cancel()));
 }
 
-extension AsyncControllerExtension on AsyncController {
+extension AsyncControllerExtension<T> on AsyncController<T> {
   /// All [AsyncState] attached.
-  Set<AsyncState> get _state => (this as AsyncControllerImpl).state;
+  Set<AsyncState<AsyncWidget<T>, T>> get _state =>
+      (this as AsyncControllerImpl<T>).state;
 
   /// Attach the [state] to the controller.
-  void attach(AsyncState state) {
+  void attach(AsyncState<AsyncWidget<T>, T> state) {
     _state.add(state);
   }
 }
