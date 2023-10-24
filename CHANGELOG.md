@@ -1,103 +1,70 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## 0.6.0 - Oct 10, 2023
 
-## [0.6.0] - Oct 10, 2023
+- Adds `AsyncNotifier` and `AsyncListenable`, extension wrappers over `ValueNotifier` and `ValueListenable` with:
 
-### Added
+  - Setters: `future` and `stream` in addition to `value`, set the internal `AsyncSnapshot`, notifying events just like any Future/Stream builder.
+  - Getters: Access async states through `snapshot` and the computations through `future` and `stream`.
+  - Extensions: Access `isLoading`, `isReloading`, `hasError` and more getters at any time.
+  - Callbacks: Call side effects with constructor properties `onData` and `onError`.
 
-New feature: `AsyncNotifier` and `AsyncListenable`, extension wrappers over `ValueNotifier` and `ValueListenable` with:
+  We also made [async_notifier](https://pub.dev/packages/async_notifier) a standalone package. It will be a core dependency of `flutter_async`.
 
-- Setters: `future` and `stream` in addition to `value`, set the internal `AsyncSnapshot`, notifying events just like any Future/Stream builder.
-- Getters: Access async states through `snapshot` and the computations through `future` and `stream`.
-- Extensions: Access `isLoading`, `isReloading`, `hasError` and more getters at any time.
-- Callbacks: Constructor property `onChanged` is called on `value` changes. Useful for side effects.
+- Updates in code were made to better follow Effective Dart style and also improve developer experience:
 
-This feature greatly reduces boilerplate so you don't have to handle all async states manually.
+  - `.async()` extensions are now deprecated. Use `.asAsync()` instead.
+  - Adds `all_lint_rules.yaml`.
+  - Updates `analysis_options` for stricter lints.
+  - Updates CHANGELOG style.
 
-### Changed
+## 0.5.2 - Sep 27, 2023
 
-Some changes were made to better follow Effective Dart style and also improve developer experience:
+- **BREAKING CHANGE**
+  - `AsyncBuilder` base constructor for simple future/stream objects.
+  - `AsyncBuilder.function` for managed getFuture/getStream objects.
+- Adds `init` and `dispose` callbacks to `AsyncBuilder`.
 
-- Deprecated .async() extensions. Use .asAsync() instead.
-- Updated naming conventions on all AsyncWidget.
+## 0.4.2 - Sep 19, 2023
 
-All deprecations will be removed in [0.7.0].
+- Adds late final initialization on `AsyncButtonState`.
 
-## [0.5.2] - Sep 27, 2023
+## 0.4.1 - Sep 7, 2023
 
-### Added
+- Adds AsyncObserver for analytics with all possible states within all `AsyncWidget` actions in this package.
+  - AsyncObserver.onActionInit
+  - AsyncObserver.onActionStart
+  - AsyncObserver.onActionInsist
+  - AsyncObserver.onActionSuccess
+  - AsyncObserver.onActionError
 
-- Added `init` and `dispose` callbacks to `AsyncBuilder`.
-- Breaking Change: New AsyncBuilder base constructor for simple future/stream objects.
-- Breaking Change: New AsyncBuilder.function for managed getFuture/getStream objects.
+- Adds `AsyncConfig.buttonLoader` that applies to all `AsyncButton` if `AsyncButtonConfig` is not set.
+- Adds `AsyncConfig.buttonError` that applies to all `AsyncButton` if `AsyncButtonConfig` is not set.
 
-## [0.4.2] - Sep 19, 2023
+## 0.3.1 - Aug 17, 2023
 
-### Changed
+- Fixes duplicate keys on AsyncButton super.key.
 
-- Refactor: Using late final instead of getters in [AsyncButtonState].
+## 0.3.0 - Aug 16, 2023
 
-## [0.4.1] - Sep 7, 2023
+- **BREAKING CHANGE**: `AsyncButtonConfig` will no longer be set with static methods. Use `AsyncConfig` instead, through `Async` widget inheritance.
+- **BREAKING CHANGE**: WidgetBuilder is used on all state builders widgets for consistency.
+- Adds AsyncConfig.of(context);
+- Adds AsyncConfig.maybeOf(context);
 
-### Added
+## 0.2.0 - Aug 15, 2023
 
-- AsyncObserver for analytics with all possible states within all [AsyncWidget] actions in this package.
-- AsyncObserver.onActionInit
-- AsyncObserver.onActionStart
-- AsyncObserver.onActionInsist
-- AsyncObserver.onActionSuccess
-- AsyncObserver.onActionError
+- **BREAKING CHANGE**: AsyncBuilder now has one single constructor.
+- AsyncBuilder.future is now deprecated. Renamed to -> AsyncBuilder.getFuture.
+- AsyncBuilder.stream is now deprecated. Renamed to -> AsyncBuilder.getStream.
+- Adds `Async` widget for void async tasks, utilities and inheritance (you can provide custom loader and error).
 
-- AsyncConfig.buttonLoader that applies to all [AsyncButton] if [AsyncButtonConfig] is not set.
-- AsyncConfig.buttonError that applies to all [AsyncButton] if [AsyncButtonConfig] is not set.
+## 0.1.0 - Jul 10, 2023
 
-## [0.3.1] - Aug 17, 2023
+- Updates minimum support to Dart SDK 2.17 <4.0 (flutter 3.0)
 
-### Fix
-
-- Fixed duplicate keys on AsyncButton super.key.
-
-## [0.3.0] - Aug 16, 2023
-
-### Added
-
-- Added [AsyncConfig] as config parameter of [Async] widget. This class for now on will hold all specific AsyncWidget configs.
-- Added AsyncConfig.of(context);
-- Added AsyncConfig.maybeOf(context);
-
-### Changed
-
-- Now WidgetBuilder is used on all state builders widgets for consistency.
-
-### Removed
-
-- [AsyncButtonConfig] will no longer be set with static methods. Use [AsyncConfig] instead through [Async] widget inheritance.
-- Removed AsyncButton.setConfig & others.
-
-## [0.2.0] - Aug 15, 2023
-
-### Added
-
-- Added [Async] widget for void async tasks, utilities and inheritance (you can provide custom loader and error).
-
-### Changed
-
-- Breaking change: AsyncBuilder now has one single constructor.
-- AsyncBuilder.future, renamed to -> AsyncBuilder.getFuture.
-- AsyncBuilder.stream, renamed to -> AsyncBuilder.getStream.
-
-## [0.1.0] - Jul 10, 2023
-
-### Changed
-
-- Bump support to Dart SDK 2.17 <4.0 (flutter 3.0)
-
-## [0.0.1] - Jul 9, 2023
-
-### Added
+## 0.0.1 - Jul 9, 2023
 
 - Initial pre-release.
