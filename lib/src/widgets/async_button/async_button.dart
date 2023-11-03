@@ -1,99 +1,54 @@
-// ignore_for_file: use_setters_to_change_properties
+// ignore_for_file: prefer_function_declarations_over_variables
 
 import 'dart:async';
 
+import 'package:animated_value/animated_value.dart';
+import 'package:async_notifier/async_notifier.dart';
 import 'package:flutter/material.dart';
 
-import '../../../flutter_async.dart';
-import '../animated_style_mixin.dart';
+import '../../configs/async_config.dart';
+import '../../extensions/context.dart';
+import '../../utils/async_state.dart';
+import '../async/async.dart';
 
-part 'async_button_config.dart';
+part 'async_button_base.dart';
+part 'async_button_impl.dart';
 part 'async_button_state.dart';
 
-class AsyncElevatedButton extends AsyncButton<ElevatedButton> {
-  const AsyncElevatedButton({
-    //Extended.
-    super.config,
-    super.controller,
-    super.listenables,
+/// Adapts [ButtonStyleButton] to [AsyncButton].
+extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
+  /// The Async version of this [ButtonStyleButton].
+  ///
+  /// Behaves exactly like the [ButtonStyleButton] counterpart. Except that
+  /// [onPressed] and [onLongPress] are now tracked when they are async.
+  ///
+  /// Each async state is handled by [AsyncButtonConfig].
+  ///
+  AsyncButton<T> asAsync({
+    AsyncButtonConfig? config,
+  }) =>
+      AsyncButton._from[T].orThrow(
+        //Extended.
+        config: config,
 
-    //Base.
-    super.key,
-    super.onPressed,
-    super.onLongPress,
-    super.onHover,
-    super.onFocusChange,
-    super.style,
-    super.focusNode,
-    super.autofocus,
-    super.clipBehavior,
-    super.statesController,
-    super.child,
-  });
+        //Base.
+        key: key,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        onFocusChange: onFocusChange,
+        focusNode: focusNode,
+        autofocus: autofocus,
+        clipBehavior: clipBehavior,
+        onPressed: onPressed,
+        style: style,
+        statesController: statesController,
+        child: child,
+      ) as AsyncButton<T>;
 }
 
-class AsyncOutlinedButton extends AsyncButton<OutlinedButton> {
-  const AsyncOutlinedButton({
-    //Extended.
-    super.config,
-    super.controller,
-    super.listenables,
-
-    //Base.
-    super.key,
-    super.onPressed,
-    super.onLongPress,
-    super.onHover,
-    super.onFocusChange,
-    super.style,
-    super.focusNode,
-    super.autofocus,
-    super.clipBehavior,
-    super.statesController,
-    super.child,
-  });
-}
-
-class AsyncTextButton extends AsyncButton<TextButton> {
-  const AsyncTextButton({
-    //Extended.
-    super.config,
-    super.controller,
-    super.listenables,
-
-    //Base.
-    super.key,
-    super.onPressed,
-    super.onLongPress,
-    super.onHover,
-    super.onFocusChange,
-    super.style,
-    super.focusNode,
-    super.autofocus,
-    super.clipBehavior,
-    super.statesController,
-    super.child,
-  });
-}
-
-class AsyncFilledButton extends AsyncButton<FilledButton> {
-  const AsyncFilledButton({
-    //Extended.
-    super.config,
-    super.controller,
-    super.listenables,
-
-    //Base.
-    super.key,
-    super.onPressed,
-    super.onLongPress,
-    super.onHover,
-    super.onFocusChange,
-    super.style,
-    super.focusNode,
-    super.autofocus,
-    super.clipBehavior,
-    super.statesController,
-    super.child,
-  });
+///Duplicate warning.
+extension AsyncButtonDuplicateExtension<T extends AsyncButton> on T {
+  /// Unnecessary duplicate of [asAsync]. Remove this.
+  @Deprecated('DUPLICATE, this widget is already an AsyncButton, remove one.')
+  AsyncButton asAsync() => this;
 }

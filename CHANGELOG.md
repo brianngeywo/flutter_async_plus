@@ -2,20 +2,28 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.1 - Nov 03, 2023
+
+- Adds `AsyncIndicator`, an smart `CircularProgressIndicator` that automatically chooses betweens primary, onPrimary and fallback theme colors based on the color below it. Additionally never distorts, can be overlayed on other widgets and linear interpolates stroke width when scaled down.
+- Updates default loadingBuilder and reloadingBuilder to use `AsyncIndicator`.
+
 ## 0.6.0 - Oct 10, 2023
 
-- Adds `AsyncNotifier` and `AsyncListenable`, extension wrappers over `ValueNotifier` and `ValueListenable` with:
+- Adds `AsyncNotifier` as new core:
 
-  - Setters: `future` and `stream` in addition to `value`, set the internal `AsyncSnapshot`, notifying events just like any Future/Stream builder.
-  - Getters: Access async states through `snapshot` and the computations through `future` and `stream`.
-  - Extensions: Access `isLoading`, `isReloading`, `hasError` and more getters at any time.
-  - Callbacks: Call side effects with constructor properties `onData` and `onError`.
+  [async_notifier](https://pub.dev/packages/async_notifier) is now a standalone package. Note: This library is not exported by `flutter_async`.
 
-  We also made [async_notifier](https://pub.dev/packages/async_notifier) a standalone package. It will be a core dependency of `flutter_async`.
+- **BREAKING CHANGE**
+The library was restructured to envision better maintenability and focus on displaying async states only.
+  - Changes `AsyncConfig` inheritance.
+  - Changes all builders to the `stateBuilder` name convention.
+  - Chnages `.async()` extensions. Use `.asAsync()` instead.
+  - Removes `AsyncObserver`. To be reused by `async_notifier`. Wip.
+  - Removes lifecycle utilities for leaner widgets.
+  - Removes `AsyncController`. Use the specific `AsyncState` through `GlobalKey` or context.
+  - Adds `AsyncWidget.at` static callback. Same signature as `.of` but visits the state at the current context, removing the need for controllers and global keys. The `.at` additionally can receive `T extends StatefulWidget` and `key` to easily identify async widgets at the current context.
 
 - Updates in code were made to better follow Effective Dart style and also improve developer experience:
-
-  - `.async()` extensions are now deprecated. Use `.asAsync()` instead.
   - Adds `all_lint_rules.yaml`.
   - Updates `analysis_options` for stricter lints.
   - Updates CHANGELOG style.

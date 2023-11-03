@@ -1,9 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_async/src/async_controller.dart';
-import 'package:flutter_async/src/widgets/async_state.dart';
 
+///
 class AsyncFAB extends FloatingActionButton {
+  ///
   const AsyncFAB({
     super.key,
     super.onPressed,
@@ -59,29 +58,5 @@ class AsyncFAB extends FloatingActionButton {
       isExtended: isExtended,
       child: child,
     );
-  }
-}
-
-class FabAsync extends StatefulWidget implements AsyncWidget {
-  const FabAsync({
-    super.key,
-    this.controller,
-    this.listenables = const [],
-  });
-
-  @override
-  State<FabAsync> createState() => _FabAsyncState();
-
-  @override
-  final AsyncController? controller;
-
-  @override
-  final List<ValueListenable<bool>> listenables;
-}
-
-class _FabAsyncState extends State<FabAsync> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

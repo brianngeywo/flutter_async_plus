@@ -1,107 +1,251 @@
-// ignore_for_file: use_function_type_syntax_for_parameters
+import 'dart:async';
 
+import 'package:async_notifier/async_notifier.dart';
 import 'package:flutter/material.dart';
 
-import '../async/inherited_async.dart';
-import '../async_state.dart';
-import 'async_state.dart';
+import '../../extensions/context.dart';
+import '../../utils/async_state.dart';
+import '../async/async.dart';
 
-/// A widget that builds depending on the state of a [Future] or [Stream].
-class AsyncBuilder<T> extends AsyncWidget<T> {
-  /// Creates a widget that builds depending on the state of a [Future] or [Stream].
+/// A [Widget] that listens to [Future] and [Stream] events.
+@immutable
+class AsyncBuilder<T> extends StatefulWidget {
+  /// Creates an [AsyncBuilder] with [future] or [stream].
   const AsyncBuilder({
     super.key,
-    super.listenables = const [],
-    this.init,
-    this.dispose,
     this.initialData,
     this.future,
     this.stream,
-    this.error = Async.inheritedError,
-    this.loader = Async.inheritedLoader,
-    this.reloader = Async.inheritedReloader,
+    this.wrapper,
+    this.alignment = Alignment.center,
+    this.noneBuilder = _noneBuilder,
+    this.errorBuilder = _errorBuilder,
+    this.loadingBuilder = _loadingBuilder,
+    this.reloadingBuilder = _reloadingBuilder,
+    this.skipReloading = false,
     required this.builder,
-  })  : getFuture = null,
-        getStream = null,
-        interval = null,
-        retry = 0,
-        assert(future == null || stream == null,
-          'Cannot provide both a future and a stream',
+  })  : assert(
+          future == null || stream == null,
+          'Cannot set both future and stream',
         ),
-        super(controller: null);
+        streamFn = null,
+        futureFn = null,
+        interval = null;
 
+  /// Creates an [AsyncBuilder] with [future] or [stream] as functions.
+  ///
+  /// This constructor is useful when you want to reload [future] and [stream]
+  /// callbacks. Add [interval] to reload them periodically.
   const AsyncBuilder.function({
     super.key,
-    super.controller,
-    super.listenables = const [],
-    this.init,
-    this.dispose,
     this.initialData,
-    this.getFuture,
-    this.getStream,
     this.interval,
-    this.retry = 0,
-    this.error = Async.inheritedError,
-    this.loader = Async.inheritedLoader,
-    this.reloader = Async.inheritedReloader,
+    Future<T> Function()? future,
+    Stream<T> Function()? stream,
+    this.wrapper,
+    this.alignment = Alignment.center,
+    this.noneBuilder = _noneBuilder,
+    this.errorBuilder = _errorBuilder,
+    this.loadingBuilder = _loadingBuilder,
+    this.reloadingBuilder = _reloadingBuilder,
+    this.skipReloading = false,
     required this.builder,
-  })  : future = null,
-        stream = null,
-        assert(getFuture == null || getStream == null,
-          'Cannot provide both a getFuture and a getStream',
-        );
+  })  : assert(
+          future == null || stream == null,
+          'cannot set both future and stream',
+        ),
+        futureFn = future,
+        streamFn = stream,
+        future = null,
+        stream = null;
 
-  /// [AsyncState.initState] callback.
-  final VoidCallback? init;
+  static Widget _reloadingBuilder(BuildContext context) {
+    final builder = Async.of(context).builderConfig?.reloadingBuilder;
+    if (builder != null) return builder(context);
 
-  /// [AsyncState.dispose] callback.
-  final VoidCallback? dispose;
-
-  /// The initial data to pass to the [builder].
-  final T? initialData;
-
-  /// The [Future] to load [builder] with. When set, [stream] must be null.
-  final Future<T>? future;
-
-  /// The [Stream] to load [builder] with. When set, [future] must be null.
-  final Stream<T>? stream;
-
-  /// The [Future] to load [builder] with. When set, [getStream] must be null.
-  final Future<T> Function()? getFuture;
-
-  /// The [Stream] to load [builder] with. When set, [getFuture] must be null.
-  final Stream<T> Function()? getStream;
-
-  /// The interval to reload the [getFuture]/[getStream].
-  final Duration? interval;
-
-  /// The number of times to retry the [getFuture]/[getStream] on error.
-  final int retry;
-
-  /// The widget to build when [getFuture]/[getStream].onError is called.
-  final ErrorBuilder? error;
-
-  /// The widget when [getFuture]/[getStream] has not completed the first time.
-  final WidgetBuilder? loader;
-
-  /// The widget when [getFuture]/[getStream] has completed at least once.
-  final WidgetBuilder? reloader;
-
-  /// The widget when [getFuture]/[getStream] has [T] data.
-  final Widget Function(BuildContext context, T data) builder;
-
-  /// Returns the [AsyncBuilderState] of the nearest [AsyncBuilder] ancestor or null.
-  static AsyncBuilderState? maybeOf(BuildContext context) {
-    return context.findRootAncestorStateOfType<AsyncBuilderState>();
+    return Async.reloadingBuilder(context);
   }
 
-  /// Returns the [AsyncBuilderState] of the nearest [AsyncBuilder] ancestor or throw.
-  static AsyncBuilderState of(BuildContext context) {
-    final state = maybeOf(context);
-    assert(state != null, 'AsyncBuilder not found');
+  static Widget _noneBuilder(BuildContext context) {
+    final builder = Async.of(context).builderConfig?.noneBuilder;
+    if (builder != null) return builder(context);
+
+    return Async.noneBuilder(context);
+  }
+
+  static Widget _loadingBuilder(BuildContext context) {
+    final builder = Async.of(context).builderConfig?.loadingBuilder;
+    if (builder != null) return builder(context);
+
+    return Async.loadingBuilder(context);
+  }
+
+  static Widget _errorBuilder(BuildContext context, Object e, StackTrace s) {
+    final builder = Async.of(context).builderConfig?.errorBuilder;
+    if (builder != null) return builder(context, e, s);
+
+    return Async.errorBuilder(context, e, s);
+  }
+
+  /// The initial [T] data to pass to [builder].
+  final T? initialData;
+
+  /// The [Future] to listen.
+  final Future<T>? future;
+
+  /// The [Future] function to load and listen.
+  final Future<T> Function()? futureFn;
+
+  /// The [Stream] to listen.
+  final Stream<T>? stream;
+
+  /// The [Stream] function to load and listen.
+  final Stream<T> Function()? streamFn;
+
+  /// The interval to reload `future/stream` callbacks.
+  final Duration? interval;
+
+  /// How builders should be aligned.
+  final AlignmentGeometry? alignment;
+
+  /// An utility wrapper around all builders.
+  final WidgetWrapper? wrapper;
+
+  /// Whether to skip reloading state.
+  final bool skipReloading;
+
+  /// The [WidgetWrapper] to wrap on [builder] or [errorBuilder] while reloading.
+  final WidgetBuilder reloadingBuilder;
+
+  /// The [WidgetBuilder] to show while error and data are null.
+  final WidgetBuilder noneBuilder;
+
+  /// The [ErrorBuilder] to show on errors.
+  final ErrorBuilder errorBuilder;
+
+  /// The [WidgetBuilder] to show while loading.
+  final WidgetBuilder loadingBuilder;
+
+  /// The [DataBuilder] to show on data.
+  final DataBuilder<T> builder;
+
+  /// Returns the [AsyncBuilderState] above this [context].
+  static AsyncBuilderState<T> of<T>(BuildContext context) {
+    final state = context.findAncestorStateOfType<AsyncBuilderState<T>>();
+    assert(state != null, 'No AsyncBuilder of this context');
+    return state!;
+  }
+
+  /// Returns the [AsyncSnapshot] below this [context]. If [key] is provided,
+  /// it will filter by it.
+  static AsyncBuilderState<T> at<T>(BuildContext context, {Key? key}) {
+    final keys = <Key?>[];
+    final state = context.visitState<AsyncBuilderState<T>>(
+      filter: (state) {
+        if (key == null) return true;
+        keys.add(state.widget.key);
+        return state.widget.key == key;
+      },
+    );
+    final byKey = key != null ? ' by key $key' : '';
+    final found = keys.isNotEmpty ? 'Found $keys.' : '';
+    assert(state != null, 'No AsyncBuilder$byKey at this context. $found');
     return state!;
   }
 
   @override
-  State<StatefulWidget> createState() => AsyncBuilderState<T>();
+  State<AsyncBuilder<T>> createState() => AsyncBuilderState();
+}
+
+/// The [State] of [AsyncBuilder].
+class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
+  Timer? _timer;
+
+  @override
+  T? get initialData => widget.initialData;
+
+  @override
+  void initState() {
+    // `AsyncBuilder`
+    if (widget.future != null) async.future = widget.future;
+    if (widget.stream != null) async.stream = widget.stream;
+
+    // `AsyncBuilder.function`
+    if (widget.futureFn != null || widget.streamFn != null) {
+      reload();
+      _setInterval(widget.interval);
+    }
+
+    super.initState();
+  }
+
+  /// Reloads `future` or `stream` function of an [AsyncBuilder.function].
+  void reload() {
+    assert(
+      widget.futureFn != null || widget.streamFn != null,
+      'Tried to reload an `AsyncBuilder` without functions. In order to use '
+      '`reload()`, you must use `AsyncBuilder.function` constructor.',
+    );
+    if (widget.futureFn != null) async.future = widget.futureFn!();
+    if (widget.streamFn != null) async.stream = widget.streamFn!();
+  }
+
+  void _setInterval(Duration? interval) {
+    _timer?.cancel();
+    if (interval != null) {
+      _timer = Timer.periodic(interval, (_) => reload());
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant AsyncBuilder<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.future != oldWidget.future && widget.future != null) {
+      async.future = widget.future;
+    }
+    if (widget.stream != oldWidget.stream && widget.stream != null) {
+      async.stream = widget.stream;
+    }
+    if (widget.interval != oldWidget.interval) _setInterval(widget.interval);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        var child = async.when(
+          skipLoading: !widget.skipReloading,
+          none: () => widget.noneBuilder(context),
+          error: (e, s) => widget.errorBuilder(context, e, s),
+          loading: () => widget.loadingBuilder(context),
+          data: (data) => widget.builder(context, data),
+        );
+
+        if (widget.alignment != null) {
+          child = Align(alignment: widget.alignment!, child: child);
+        }
+
+        if (!widget.skipReloading) {
+          child = Stack(
+            children: [
+              child,
+              if (async.isReloading) widget.reloadingBuilder(context),
+            ],
+          );
+        }
+
+        if (widget.wrapper != null) {
+          child = widget.wrapper!(context, child);
+        }
+
+        return child;
+      },
+    );
+  }
 }

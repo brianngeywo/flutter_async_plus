@@ -1,91 +1,130 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_function_declarations_over_variables
 
-import '../../../flutter_async.dart';
-import '../async_state.dart';
+part of 'async_button.dart';
 
-class AsyncButton<T extends ButtonStyleButton> extends ButtonStyleButton
-    implements AsyncWidget {
+/// Base class for [AsyncButton] widget implementations.
+abstract class AsyncButton<T extends ButtonStyleButton>
+    extends ButtonStyleButton {
+  /// Creates [AsyncButton] of a [ButtonStyleButton].
+  ///
+  /// Behaves exactly like the [ButtonStyleButton] counterpart. Except that
+  /// [onPressed] and [onLongPress] are now tracked when they are async.
+  ///
+  /// Each async state is handled by [AsyncConfig].
+  ///
+  /// - Loading:
+  /// [AsyncButtonConfig.loadingBuilder], fallbacks to [AsyncConfig.loadingBuilder].
+  ///
+  /// - Error:
+  /// [AsyncButtonConfig.errorBuilder], fallbacks to [AsyncConfig.errorBuilder].
+  ///
+  /// By default, [AsyncButton] will show a [CircularProgressIndicator] when
+  /// loading and a [Text] with the error when an error occurs.
+  ///
   const AsyncButton({
-    //Extended.
-    this.config,
-    this.controller,
-    this.listenables = const [],
-
-    //Base.
     super.key,
-    super.onPressed,
-    super.onLongPress,
-    super.onHover,
-    super.onFocusChange,
-    super.style,
-    super.focusNode,
+    this.config,
+    required super.onPressed,
+    required super.onLongPress,
+    required super.onHover,
+    required super.onFocusChange,
+    required super.style,
+    required super.focusNode,
     super.autofocus = false,
-    super.clipBehavior = Clip.none,
+    super.clipBehavior = Clip.hardEdge,
     super.statesController,
-    super.child,
+    required super.child,
   });
 
-  /// The configs of [AsyncButton]. Prefer setting AsyncButton<Type>.setConfig().
+  /// The config of [AsyncButton].
   final AsyncButtonConfig? config;
 
-  @override
-  final AsyncController? controller;
-
-  @override
-  final List<ValueListenable<bool>> listenables;
-
-  /// Returns the [AsyncButtonState] of the nearest [AsyncButton] ancestor or null.
-  static AsyncButtonState? maybeOf(BuildContext context) {
-    return context.findRootAncestorStateOfType<AsyncButtonState>();
-  }
-
-  /// Returns the [AsyncButtonState] of the nearest [AsyncButton] ancestor or throw.
-  static AsyncButtonState of(BuildContext context) {
-    final state = maybeOf(context);
-    assert(state != null, 'AsyncButton not found');
+  /// Returns the [AsyncButtonState] above this [context].
+  static AsyncButtonState<T> of<T extends ButtonStyleButton>(
+    BuildContext context,
+  ) {
+    final state = context.findAncestorStateOfType<AsyncButtonState<T>>();
+    assert(state != null, 'No AsyncButton of this context');
     return state!;
   }
 
-  static Widget inheritedError(BuildContext context, Object e, StackTrace s) {
-    return Async.of(context).config.buttonError.call(context, e, s);
+  /// Returns the [AsyncButtonState] below this [context]. If [key] is provided,
+  /// it will filter by it.
+  static AsyncButtonState<T> at<T extends ButtonStyleButton>(
+    BuildContext context, {
+    Key? key,
+  }) {
+    final keys = <Key?>[];
+    final state = context.visitState<AsyncButtonState<T>>(
+      filter: (state) {
+        if (key == null) return true;
+        keys.add(state.widget.key);
+        return state.widget.key == key;
+      },
+    );
+    final byKey = key != null ? 'by key $key' : '';
+    final found = keys.isNotEmpty ? 'Found $keys.' : '';
+    assert(state != null, 'No AsyncButton $byKey at this context. $found');
+    return state!;
   }
 
-  static Widget inheritedLoader(BuildContext context) {
-    return Async.of(context).config.buttonLoader.call(context);
-  }
+  static const _to = {
+    TextButton: TextButton.new,
+    FilledButton: FilledButton.new,
+    ElevatedButton: ElevatedButton.new,
+    OutlinedButton: OutlinedButton.new,
+  };
+
+  static const _from = {
+    TextButton: AsyncTextButton.new,
+    FilledButton: AsyncFilledButton.new,
+    ElevatedButton: AsyncElevatedButton.new,
+    OutlinedButton: AsyncOutlinedButton.new,
+  };
+
+  static final _config = {
+    TextButton: (BuildContext c) => Async.of(c).textButtonConfig,
+    FilledButton: (BuildContext c) => Async.of(c).filledButtonConfig,
+    ElevatedButton: (BuildContext c) => Async.of(c).elevatedButtonConfig,
+    OutlinedButton: (BuildContext c) => Async.of(c).outlinedButtonConfig,
+  };
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
-    if (this is AsyncButton<OutlinedButton>) {
-      return const OutlinedButton(onPressed: null, child: Text(''))
-          .defaultStyleOf(context);
-    }
-    if (this is AsyncButton<FilledButton>) {
-      return const FilledButton(onPressed: null, child: Text(''))
-          .defaultStyleOf(context);
-    }
-    if (this is AsyncButton<TextButton>) {
-      return const TextButton(onPressed: null, child: Text(''))
-          .defaultStyleOf(context);
-    }
-    return const ElevatedButton(onPressed: null, child: Text(''))
-        .defaultStyleOf(context);
+    final button = _to[T].orThrow(child: this, onPressed: null);
+    return button.defaultStyleOf(context);
   }
 
   @override
   ButtonStyle? themeStyleOf(BuildContext context) {
-    if (this is AsyncButton<OutlinedButton>) {
-      return OutlinedButtonTheme.of(context).style;
-    }
+    final button = _to[T].orThrow(child: this, onPressed: null);
+    return button.themeStyleOf(context);
+  }
 
-    if (this is AsyncButton<FilledButton>) {
-      return FilledButtonTheme.of(context).style;
-    }
-    if (this is AsyncButton<TextButton>) {
-      return TextButtonTheme.of(context).style;
-    }
-    return ElevatedButtonTheme.of(context).style;
+  /// The resolved style of [AsyncButton].
+  ButtonStyle styleOf(BuildContext context) {
+    var style = const ButtonStyle();
+
+    style = style.merge(this.style);
+    style = style.merge(themeStyleOf(context));
+    style = style.merge(defaultStyleOf(context));
+
+    return style;
+  }
+
+  /// The resolved config of [AsyncButton].
+  AsyncButtonResolvedConfig configOf(BuildContext context) {
+    var config = const AsyncButtonConfig();
+
+    config = config.merge(this.config);
+    config = config.merge(_config[T]?.call(context));
+    config = config.merge(Async.of(context).buttonConfig);
+    config = config.copyWith(
+      errorBuilder: config.errorBuilder ?? Async.errorBuilder,
+      loadingBuilder: config.loadingBuilder ?? Async.loadingBuilder,
+    );
+
+    return config.resolve();
   }
 
   @override

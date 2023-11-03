@@ -1,124 +1,121 @@
-// ignore_for_file: use_function_type_syntax_for_parameters
-
 part of 'async_button.dart';
 
+/// The [AsyncState] of [AsyncButton].
 class AsyncButtonState<T extends ButtonStyleButton>
-    extends AsyncStyleState<AsyncButton<T>, void, ButtonStyle>
-    implements AsyncButtonController {
-  @override
-  bool get isElevatedButton => widget is AsyncButton<ElevatedButton>;
-  @override
-  bool get isTextButton => widget is AsyncButton<TextButton>;
-  @override
-  bool get isOutlinedButton => widget is AsyncButton<OutlinedButton>;
-  @override
-  bool get isFilledButton => widget is AsyncButton<FilledButton>;
+    extends AsyncState<AsyncButton<T>, void> {
+  AsyncButtonResolvedConfig get _config => widget.configOf(context);
 
-  /// Resolves the default [AsyncButtonConfig] of this [T].
-  AsyncButtonConfig? get _config {
-    if (isFilledButton) return AsyncConfig.of(context).filledButton;
-    if (isOutlinedButton) return AsyncConfig.of(context).outlinedButton;
-    if (isTextButton) return AsyncConfig.of(context).textButton;
-    return AsyncConfig.of(context).elevatedButton;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _size = context.size);
   }
 
-  /// The current [AsyncButtonConfig] of this button.
-  late final config = widget.config ?? _config ?? const AsyncButtonConfig();
+  /// Invokes [AsyncButton.onPressed] programatically.
+  void press() {
+    if (widget.onPressed != null) {
+      _cancelTimer?.cancel();
+      async.future = Future(widget.onPressed!);
+    }
+  }
 
-  late final errorColor = Theme.of(context).colorScheme.error;
-
-  late final baseStyle =
-      (widget.style ?? widget.themeStyleOf(context) ?? const ButtonStyle())
-          .merge(widget.defaultStyleOf(context));
-
-  late final errorStyle = baseStyle.copyWith(
-    backgroundColor: () {
-      if (isOutlinedButton) return null;
-      if (isTextButton) return null;
-      return MaterialStatePropertyAll(errorColor);
-    }(),
-    foregroundColor: () {
-      if (isElevatedButton) return null;
-      if (isFilledButton) return null;
-      return MaterialStatePropertyAll(errorColor);
-    }(),
-  );
-
-  late final loadingStyle = baseStyle.copyWith(
-      // padding: const MaterialStatePropertyAll(EdgeInsets.zero),
-      );
+  /// Invokes [AsyncButton.onLongPress] programatically.
+  void longPress() {
+    if (widget.onLongPress != null) {
+      _cancelTimer?.cancel();
+      async.future = Future(widget.onLongPress!);
+    }
+  }
 
   @override
-  late final asyncStyle = AsyncStyle(
-    baseStyle: baseStyle,
-    errorStyle: errorStyle,
-    loadingStyle: loadingStyle,
-    errorDuration: config.errorDuration,
-    styleDuration: config.styleDuration,
-    styleCurve: config.styleCurve,
-    lerp: ButtonStyle.lerp,
-  );
+  void onError(Object error, StackTrace? stackTrace) {
+    super.onError(error, stackTrace);
+    _cancelTimer?.cancel();
+    _cancelTimer = Timer(_config.errorDuration, cancel);
+  }
 
-  /// The child of this button.
-  Widget get child => widget.child!;
-
-  @override
-  Future<void> reload() => press(); // default action.
-
-  @override
-  Future<void> press() => setAction(widget.onPressed!);
-
-  @override
-  Future<void> longPress() => setAction(widget.onLongPress!);
+  Timer? _cancelTimer;
+  Size? _size;
 
   @override
   Widget build(BuildContext context) {
-    Widget animatedSize({required Widget child}) {
-      if (config.animatedSize == null) return child;
+    final theme = Theme.of(context);
 
-      return AnimatedSize(
-        curve: config.animatedSize!.curve,
-        duration: config.animatedSize!.duration,
-        alignment: config.animatedSize!.alignment,
-        clipBehavior: config.animatedSize!.clipBehavior,
-        reverseDuration: config.animatedSize!.reverseDuration,
+    var style = widget.styleOf(context);
+
+    // ? (arthurbcd): maybe callback the styles ?
+    style = async.snapshot.when(
+      data: (_) => style,
+      loading: () => style,
+      error: (e, s) => style.copyWith(
+        backgroundColor: () {
+          if (T == OutlinedButton) return null;
+          if (T == TextButton) return null;
+          return MaterialStatePropertyAll(theme.colorScheme.error);
+        }(),
+        foregroundColor: () {
+          if (T == ElevatedButton) return null;
+          if (T == FilledButton) return null;
+          return MaterialStatePropertyAll(theme.colorScheme.error);
+        }(),
+      ),
+    );
+
+    var child = async.snapshot.when(
+      data: (_) => widget.child,
+      error: (e, s) => _config.errorBuilder(context, e, s),
+      loading: () => _config.loadingBuilder(context),
+    );
+
+    if (_config.animateSize) {
+      child = AnimatedSize(
+        alignment: _config.animatedSizeConfig.alignment,
+        duration: _config.animatedSizeConfig.duration,
+        reverseDuration: _config.animatedSizeConfig.reverseDuration,
+        curve: _config.animatedSizeConfig.curve,
+        clipBehavior: _config.animatedSizeConfig.clipBehavior,
         child: child,
       );
     }
 
-    // Animated child.
-    final child = animatedSize(
-      child: Builder(
-        builder: (context) {
-          if (hasError && hasSize) {
-            return config.error(context, error!, stackTrace!);
-          }
-          if (isLoading && hasSize) return config.loader(context);
-          return widget.child!;
-        },
-      ),
+    child = AnimatedValue<ButtonStyle?>(
+      value: style,
+      duration: _config.styleDuration,
+      curve: _config.styleCurve,
+      lerp: ButtonStyle.lerp,
+      builder: (context, style, child) {
+        return AsyncButton._to[T].orThrow(
+          style: style,
+          onPressed: widget.onPressed != null ? press : null,
+          onLongPress: widget.onLongPress != null ? longPress : null,
+          onHover: widget.onHover,
+          onFocusChange: widget.onFocusChange,
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
+          clipBehavior: widget.clipBehavior,
+          statesController: widget.statesController,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      child: child,
     );
 
-    return SizedBox.fromSize(
-      size: config.keepSize && hasSize ? size : null,
-      child: () {
-        if (isOutlinedButton) return OutlinedButton.new;
-        if (isTextButton) return TextButton.new;
-        if (isFilledButton) return FilledButton.new;
-        return ElevatedButton.new;
-      }()(
-        // key: widget.key,
-        onPressed: widget.onPressed != null ? press : null,
-        onLongPress: widget.onLongPress != null ? longPress : null,
-        onHover: widget.onHover,
-        onFocusChange: widget.onFocusChange,
-        style: animatedStyle ?? baseStyle,
-        focusNode: widget.focusNode,
-        autofocus: widget.autofocus,
-        clipBehavior: widget.clipBehavior,
-        statesController: widget.statesController,
+    if (_config.keepHeight || _config.keepWidth) {
+      child = SizedBox(
+        height: _config.keepHeight ? _size?.height : null,
+        width: _config.keepWidth ? _size?.width : null,
         child: child,
-      ),
-    );
+      );
+    }
+
+    return child;
+  }
+}
+
+extension<T extends Object> on T? {
+  T get orThrow {
+    assert(this != null, 'Type $T is not supported. Please, open an issue.');
+    if (this == null) throw ArgumentError.notNull('$T');
+    return this!;
   }
 }
