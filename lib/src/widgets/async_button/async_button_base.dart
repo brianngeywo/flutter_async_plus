@@ -39,7 +39,7 @@ abstract class AsyncButton<T extends ButtonStyleButton>
   /// The config of [AsyncButton].
   final AsyncButtonConfig? config;
 
-  /// Returns the [AsyncButtonState] above this [context].
+  /// Returns the first [AsyncButtonState] above this [context].
   static AsyncButtonState<T> of<T extends ButtonStyleButton>(
     BuildContext context,
   ) {
@@ -48,24 +48,16 @@ abstract class AsyncButton<T extends ButtonStyleButton>
     return state!;
   }
 
-  /// Returns the [AsyncButtonState] below this [context]. If [key] is provided,
-  /// it will filter by it.
+  /// Returns the first [AsyncButtonState] below this [context].
+  /// Filters by [key], if given.
   static AsyncButtonState<T> at<T extends ButtonStyleButton>(
     BuildContext context, {
     Key? key,
   }) {
-    final keys = <Key?>[];
-    final state = context.visitState<AsyncButtonState<T>>(
-      filter: (state) {
-        if (key == null) return true;
-        keys.add(state.widget.key);
-        return state.widget.key == key;
-      },
+    return context.visitState(
+      assertType: 'AsyncButton',
+      filter: (state) => key == null || state.widget.key == key,
     );
-    final byKey = key != null ? 'by key $key' : '';
-    final found = keys.isNotEmpty ? 'Found $keys.' : '';
-    assert(state != null, 'No AsyncButton $byKey at this context. $found');
-    return state!;
   }
 
   static const _to = {
@@ -123,6 +115,7 @@ abstract class AsyncButton<T extends ButtonStyleButton>
       errorBuilder: config.errorBuilder ?? Async.errorBuilder,
       loadingBuilder: config.loadingBuilder ?? Async.loadingBuilder,
     );
+    
 
     return config.resolve();
   }

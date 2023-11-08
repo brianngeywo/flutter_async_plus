@@ -2,9 +2,15 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.2 - Nov 07, 2023
+
+- Changes default clipBehavior to hardEdge to AsyncButton as it's neeed to avoid out of bounds animations.
+- Updated README
+- Updated example
+
 ## 0.6.1 - Nov 03, 2023
 
-- Adds `AsyncIndicator`, an smart `CircularProgressIndicator` that automatically chooses betweens primary, onPrimary and fallback theme colors based on the color below it. Additionally never distorts, can be overlayed on other widgets and linear interpolates stroke width when scaled down.
+- Adds `AsyncIndicator`, an smart `CircularProgressIndicator` that automatically chooses betweens primary, onPrimary and fallback theme colors based on the color below it. Additionally never distorts when sized, can be overlayed on other widgets and linear interpolates stroke width when scaled down.
 - Updates default loadingBuilder and reloadingBuilder to use `AsyncIndicator`.
 
 ## 0.6.0 - Oct 10, 2023

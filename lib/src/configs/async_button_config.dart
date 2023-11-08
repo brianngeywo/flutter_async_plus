@@ -10,6 +10,7 @@ class AsyncButtonConfig {
     this.keepWidth,
     this.animateSize,
     this.animatedSizeConfig,
+    // this.clipBehavior,
     this.errorDuration,
     this.styleDuration,
     this.styleCurve,
@@ -28,6 +29,9 @@ class AsyncButtonConfig {
 
   /// The configuration for [AnimatedSize].
   final AnimatedSizeConfig? animatedSizeConfig;
+
+  /// The clip behavior of AsyncButton.
+  // final Clip? clipBehavior;
 
   /// The duration to show error widget.
   final Duration? errorDuration;
@@ -83,6 +87,7 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
     this.keepWidth = false,
     this.animateSize = true,
     this.animatedSizeConfig = const AnimatedSizeConfig(),
+    // this.clipBehavior = Clip.hardEdge,
     this.errorDuration = const Duration(seconds: 3),
     this.styleCurve = Curves.easeInOut,
     this.styleDuration = const Duration(milliseconds: 300),
@@ -101,6 +106,9 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
 
   @override
   final AnimatedSizeConfig animatedSizeConfig;
+
+  @override
+  // final Clip clipBehavior;
 
   @override
   final Duration errorDuration;
@@ -124,7 +132,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
   AsyncButtonConfig copyWith({
     bool? keepHeight,
     bool? keepWidth,
+    bool? animateSize,
     AnimatedSizeConfig? animatedSizeConfig,
+    Clip? clipBehavior,
     Duration? errorDuration,
     Duration? styleDuration,
     Curve? styleCurve,
@@ -134,7 +144,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
     return AsyncButtonConfig(
       keepHeight: keepHeight ?? this.keepHeight,
       keepWidth: keepWidth ?? this.keepWidth,
+      animateSize: animateSize ?? this.animateSize,
       animatedSizeConfig: animatedSizeConfig ?? this.animatedSizeConfig,
+      // clipBehavior: clipBehavior ?? this.clipBehavior,
       errorDuration: errorDuration ?? this.errorDuration,
       styleDuration: styleDuration ?? this.styleDuration,
       styleCurve: styleCurve ?? this.styleCurve,
@@ -149,7 +161,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
     return copyWith(
       keepHeight: keepHeight ?? other.keepHeight,
       keepWidth: keepWidth ?? other.keepWidth,
+      animateSize: animateSize ?? other.animateSize,
       animatedSizeConfig: animatedSizeConfig ?? other.animatedSizeConfig,
+      // clipBehavior: clipBehavior ?? other.clipBehavior,
       errorDuration: errorDuration ?? other.errorDuration,
       styleDuration: styleDuration ?? other.styleDuration,
       styleCurve: styleCurve ?? other.styleCurve,
@@ -165,7 +179,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
     return AsyncButtonResolvedConfig(
       keepHeight: keepHeight ?? def.keepHeight,
       keepWidth: keepWidth ?? def.keepWidth,
+      animateSize: animateSize ?? def.animateSize,
       animatedSizeConfig: animatedSizeConfig ?? def.animatedSizeConfig,
+      // clipBehavior: clipBehavior ?? def.clipBehavior,
       errorDuration: errorDuration ?? def.errorDuration,
       styleCurve: styleCurve ?? def.styleCurve,
       styleDuration: styleDuration ?? def.styleDuration,

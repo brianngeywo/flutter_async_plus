@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../configs/async_config.dart';
+import '../../utils/adaptive_theme.dart';
 import '../async_indicator/async_indicator.dart';
 
 /// [Widget] wrapper callback.
@@ -29,7 +30,7 @@ class Async extends StatelessWidget {
   /// The config to be providen below this [Async].
   final AsyncConfig config;
 
-  /// The [WidgetWrapper] to wrap [Async.child].
+  /// Utility [WidgetWrapper] for [Async.child].
   final WidgetWrapper? wrapper;
 
   /// The child of this [Async].
@@ -62,7 +63,7 @@ class Async extends StatelessWidget {
       message = (e as dynamic).message as String;
     } catch (_) {}
 
-    return Text(message);
+    return AdaptiveTheme(child: Text(message));
   }
 
   /// Returns [AsyncConfig.loadingBuilder] or default.
@@ -71,7 +72,7 @@ class Async extends StatelessWidget {
     if (builder != null) return builder(context);
 
     // default
-    return const AsyncIndicator();
+    return const AsyncIndicator(alignment: null);
   }
 
   /// Returns [AsyncConfig.reloadingBuilder] or default.

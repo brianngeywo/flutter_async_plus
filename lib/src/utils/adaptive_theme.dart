@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// A [Theme] based on parent widget's background color.
-class AdaptiveTheme extends StatelessWidget {
+class AdaptiveTheme extends StatefulWidget {
   /// Creates an [AdaptiveTheme] widget.
   ///
   /// The [fallback] theme is used when the parent widget's background color has
@@ -34,6 +34,13 @@ class AdaptiveTheme extends StatelessWidget {
   /// The child of this [AdaptiveTheme].
   final Widget child;
 
+  @override
+  State<AdaptiveTheme> createState() => _AdaptiveThemeState();
+}
+
+class _AdaptiveThemeState extends State<AdaptiveTheme> {
+  ColorScheme get _colorScheme => getColorScheme();
+
   /// Returns the contrast ratio between two colors.
   double getContrastRatio(Color a, Color b) {
     final luminanceA = a.computeLuminance();
@@ -43,8 +50,7 @@ class AdaptiveTheme extends StatelessWidget {
         : (luminanceB + 0.05) / (luminanceA + 0.05);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  ColorScheme getColorScheme() {
     Color? color;
 
     context.visitAncestorElements((element) {
@@ -64,25 +70,59 @@ class AdaptiveTheme extends StatelessWidget {
       return true;
     });
 
-    var scheme = fallback?.colorScheme ?? Theme.of(context).colorScheme;
+    var scheme = widget.fallback?.colorScheme ?? Theme.of(context).colorScheme;
     final background = color ?? Colors.transparent;
 
-    final contrastPrimary = getContrastRatio(background, scheme.primary);
-    final contrastOnPrimary = getContrastRatio(background, scheme.onPrimary);
+    final primaryRatio = getContrastRatio(background, scheme.primary);
+    final onPrimaryRatio = getContrastRatio(background, scheme.onPrimary);
 
-    if (contrastPrimary < recommendedContrastRatio) {
+    final surfaceRatio = getContrastRatio(background, scheme.surface);
+    final onSurfaceRatio = getContrastRatio(background, scheme.onSurface);
+
+    if (primaryRatio < widget.recommendedContrastRatio) {
       // swap colors if the contrast ratio is higher on primary
-      scheme = contrastPrimary >= contrastOnPrimary
-          ? scheme
-          : scheme.copyWith(
-              primary: scheme.onPrimary,
-              onPrimary: scheme.primary,
-            );
+      if (primaryRatio < onPrimaryRatio) {
+        scheme = scheme.copyWith(
+          primary: scheme.onPrimary,
+          onPrimary: scheme.primary,
+        );
+      }
     }
 
+    if (surfaceRatio < widget.recommendedContrastRatio) {
+      // swap colors if the contrast ratio is higher on surface
+      if (surfaceRatio < onSurfaceRatio) {
+        scheme = scheme.copyWith(
+          surface: scheme.onSurface,
+          onSurface: scheme.surface,
+        );
+      }
+    }
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   checkAnimation();
+    // });
+
+    return scheme;
+  }
+
+  // Future<void> checkAnimation() async {
+  //   await Future<void>.delayed(const Duration(milliseconds: 100));
+
+  //   if (!mounted) return;
+
+  //   final newColorScheme = getColorScheme();
+
+  //   if (newColorScheme != _colorScheme) {
+  //     setState(() => _colorScheme = newColorScheme);
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(colorScheme: scheme),
-      child: child,
+      data: Theme.of(context).copyWith(colorScheme: _colorScheme),
+      child: widget.child,
     );
   }
 }

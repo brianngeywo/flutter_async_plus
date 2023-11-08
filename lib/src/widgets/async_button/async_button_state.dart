@@ -111,10 +111,12 @@ class AsyncButtonState<T extends ButtonStyleButton>
     return child;
   }
 }
-
 extension<T extends Object> on T? {
   T get orThrow {
-    assert(this != null, 'Type $T is not supported. Please, open an issue.');
+    assert(
+      this != null,
+      'Invalid ButtonStyleButton. Please, consider opening an issue.',
+    );
     if (this == null) throw ArgumentError.notNull('$T');
     return this!;
   }

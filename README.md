@@ -1,118 +1,95 @@
 # Flutter Async
 
-Flutter Async is a Flutter package designed to manage asynchronous tasks in Flutter effectively. With widgets like AsyncBuilder, AsyncElevatedButton, AsyncFilledButton, AsyncTextButton, and AsyncOutlinedButton, developers can handle tasks such as fetching data from an API or running computations in the background with ease. This package provides built-in loaders and error handlers, and allows you to create custom handlers as needed.
+Flutter Async transforms traditional Flutter widgets into their asynchronous counterparts, enabling seamless handling of async operations. By extending familiar widgets with async functionality, this package allows for the effortless execution of background tasks, data fetching, and more, while providing feedback through loaders and handling errors—all without compromising the responsiveness of your app's interface.
 
-## Features
+## Getting Started
 
-- **AsyncBuilder:** A widget for building interfaces based on Future or Stream data sources. It provides built-in handling for loading and error states, as well as a mechanism for automatic or user-triggered retries.
-- **AsyncButton (AsyncElevatedButton, AsyncFilledButton, AsyncTextButton, AsyncOutlinedButton):** Buttons that trigger asynchronous actions. These buttons automatically show a loading indicator while the action is in progress, and also provide error handling.
+- Optional, but you can add `Async` widget to the root of your app. This allows you to configure or override the default behavior of flutter_async. You can scope how many `Async` widgets you want.
+
+Use async as scope to provide custom [AsyncConfig]:
+
+```dart
+    return Async(
+      config: AsyncConfig(
+        loadingBuilder: (_) => CircurlarProgressIndicator(),
+        textButtonConfig: AsyncButtonConfig(
+          loader: (_) => const Text('loading'),
+        ),
+      ),
+      child: // your scope.
+    )
+```
+
+## AsyncIndicator
+
+A smart `CircularProgressIndicator` that automatically chooses betweens primary, onPrimary and fallback theme colors based on the color below it. Additionally never distorts when sized, can be overlayed on other widgets and linear interpolates stroke width when scaled down.
+
+```dart
+  AsyncIndicator()
+  // or call it through the extension method:
+  CircularProgressIndicator().asAsync()
+```
+
+This is the default `Async.loadingBuilder` for flutter_async. You can use it just like any progress indicator:
+
+```dart
+Builder(
+  builder: (context) {
+    if (isLoading) return AsyncIndicator();
+    return ...
+  }
+)
+```
 
 ## AsyncBuilder
 
-AsyncBuilder is a powerful widget that simplifies handling of Future and Stream objects in Flutter.
+AsyncBuilder is a powerful widget that simplifies handling of Future and Stream objects in Flutter. You don't have to define any builder. flutter_async defaults them to the `AsyncConfig`.
 
 Here are the properties of AsyncBuilder:
 
 ```dart
-  /// The initial data to pass to the [builder].
-  final T? initialData;
-
-  /// The bool [listenables] to listen and animate to external loading states.
-  final List<ValueListenable<bool>> listenables;
-
-  /// The [Future] to load [builder] with. When set, [getStream] must be null.
-  final Future<T> Function()? getFuture;
-
-  /// The [Stream] to load [builder] with. When set, [getFuture] must be null.
-  final Stream<T> Function()? getStream;
-
-  /// The interval to auto reload the [getFuture]/[getStream].
-  final Duration? interval;
-
-  /// The number of times to retry the [getFuture]/[getStream] on error.
-  final int retry;
-
-  /// The widget to build when [getFuture]/[getStream].onError is called.
-  final ErrorBuilder? error;
-
-  /// The widget when [getFuture]/[getStream] has not completed the first time.
-  final WidgetBuilder? loader;
-
-  /// The widget when [getFuture]/[getStream] has completed at least once.
-  final WidgetBuilder? reloader;
-
-  /// The widget when [getFuture]/[getStream] has [T] data.
-  final Widget Function(BuildContext context, T data) builder;
-
-  /// The [AsyncController] to use.
-  final AsyncController<T>? controller;
+ AsyncBuilder(
+   future: myFuture, // or stream
+   noneBuilder: (context) {
+    // shown when operation is not yet started. Ex: future and stream are null
+    // or completed without any error or data. Ex: Stream.empty()
+    return Text('none');
+   }
+   loadingBuilder: (context) {
+     return const CircularProgressIndicator(); // defaults to AsyncIndicator()
+   },
+   reloadingBuilder: (context) {
+    // overlayed when `isLoading` and also `hasData` or `hasError`
+    // you can skip this loader by setting `AsyncBuilder.skipReloading` to true.
+     return const Align(alignment: Alignment.topCenter, child: LinearProgressIndicator());
+   },
+   errorBuilder: (context, error, stackTrace) {
+     return Text('$error');
+   },
+   builder: (context, data) {
+     return Text('$data');
+   },
+ ),
 ```
 
-## AsyncController
+Or unlock some extra superpowers with `function` constructor for handling async functions:
+
+This is usefeul for simple usecases with contained state management. If you are handling state in a separate class, better keep using the default constructor of  `AsyncBuilder`.
 
 ```dart
-  /// Reloads the async [Function].
-  void reload();
-
-  /// The [Future] or [Stream] error.
-  Object? get error;
-
-  /// The [Future] or [Stream] stack trace.
-  StackTrace? get stackTrace;
-
-  /// A listenable that notifies when [isLoading] changes.
-  ValueNotifier<bool> get loading;
-
-  /// Whether the [Future] or [Stream] is loading.
-  bool get isLoading;
-
-  /// Whether the [Future] or [Stream] has an error.
-  bool get hasError;
+ AsyncBuilder.function(
+   future: () => myFutureFunction(), // or stream
+   interval: Duration(seconds: 5), // auto reload
+   builder: (context, data) {
+     return TextButton(
+      child: Text('$data')
+      onPressed: () => AsyncBuilder.of(context).reload(); // manual reload
+    );
+   },
+ ),
 ```
-
-You can also use `AsyncController.future()` or `AsyncController.stream()` to unlock other
-useful methods for `AsyncBuilder`.
-
-For future:
-
-```dart
-  T? get data;
-  bool get hasData;
-  bool get isReloading;
-```
-
-For stream:
-
-```dart
-  void pause();
-  void resume();
-  void cancel();
-  bool get isPaused;
-  T? get data;
-  bool get hasData;
-  bool get isReloading;
-```
-
-If just need a simple `reload()` api for activating your buttons programatically, feel free to use just the `AsyncController` base api. All async widgets are compatible with it.
 
 ## AsyncButton
-
-AsyncButton is a set of widgets that are useful when the button triggers asynchronous actions, such as network requests. They automatically handle loading and error states. They come in four variants: AsyncElevatedButton, AsyncFilledButton, AsyncTextButton, and AsyncOutlinedButton.
-
-Here are the properties of AsyncButton:
-
-```dart
-  /// The configs of [AsyncButton]. Prefer setting AsyncButton.setConfig().
-  final AsyncButtonConfig? config;
-
-  /// The controller of the button.
-  final AsyncController? controller;
-
-   /// The bool [listenables] to listen and animate to external loading states.
-  final List<ValueListenable<bool>> listenables;
-```
-
-## Usage
 
 Simply put Async in front of your Button.
 
@@ -123,70 +100,51 @@ Simply put Async in front of your Button.
   ),
 ```
 
-Or simply use the AsyncButtonExtension:
+Or use the AsyncButtonExtension, works on any flutter's ButtonStyleButton:
 
 ```dart
   ElevatedButton(
     onPressed: onHello,
     child: const Text('ElevatedButton'),
-  ).async(),
+  ).asAsync(),
 ```
 
 Control them programatically with:
 
 ```dart
-  Async.of(context).reload();
-  or
-  AsyncButton.of(context).longPress();
-```
-
-## Async widget
-
-Use async as scope to provide custom [AsyncConfig]:
-
-```dart
-    return Async(
-      config: AsyncConfig(
-        textButton: AsyncButtonConfig(
-          loader: (_) => const Text('loading'),
-        ),
-      ),
-```
-
-The [Async] widget comes with some other useful utilities too.
-
-```dart
-  Async(
-    init: () {} // smart init shows a loader on async, ignore on void.
-    dispose: () {} // same as widget.dispose()
-    reassemble: () {} // for reassembling services on hot reload
-    keepAlive: false // makes this widget always alive
-  )
+  AsyncButton.at(context).press();
+  AsyncButton.at(context).longPress();
 ```
 
 ### AsyncButtonConfig Properties
 
 ```dart
-  /// Whether or not this button should keep its size when animating.
-  final bool keepSize;
+  /// Whether to keep button height on state changes. Defaults to `true`.
+  final bool? keepHeight;
 
-  /// The configuration for [AnimatedSize]. If null, sizing animation is ignored.
-  final AnimatedSizeConfig? animatedSize;
+  /// Whether to keep button width on state changes. Defaults to `false`.
+  final bool? keepWidth;
+
+  /// Whether this button should animate its size.
+  final bool? animateSize;
+
+  /// The configuration for [AnimatedSize].
+  final AnimatedSizeConfig? animatedSizeConfig;
 
   /// The duration to show error widget.
-  final Duration errorDuration;
+  final Duration? errorDuration;
 
   /// The duration between styles animations.
-  final Duration styleDuration;
+  final Duration? styleDuration;
 
   /// The curve to use on styles animations.
-  final Curve styleCurve;
+  final Curve? styleCurve;
 
   /// The widget to show on loading.
-  final WidgetBuilder loader;
+  final WidgetBuilder? loadingBuilder;
 
   /// The widget to show on error.
-  final WidgetBuilder error;
+  final ErrorBuilder? errorBuilder;
 ```
 
 ## Future Plans and Development

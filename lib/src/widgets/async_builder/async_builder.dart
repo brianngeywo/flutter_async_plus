@@ -129,28 +129,20 @@ class AsyncBuilder<T> extends StatefulWidget {
   /// The [DataBuilder] to show on data.
   final DataBuilder<T> builder;
 
-  /// Returns the [AsyncBuilderState] above this [context].
+  /// Returns the first [AsyncBuilderState] above this [context].
   static AsyncBuilderState<T> of<T>(BuildContext context) {
     final state = context.findAncestorStateOfType<AsyncBuilderState<T>>();
     assert(state != null, 'No AsyncBuilder of this context');
     return state!;
   }
 
-  /// Returns the [AsyncSnapshot] below this [context]. If [key] is provided,
-  /// it will filter by it.
+  /// Returns the first [AsyncBuilderState] below this [context].
+  /// Filters by [key], if given.
   static AsyncBuilderState<T> at<T>(BuildContext context, {Key? key}) {
-    final keys = <Key?>[];
-    final state = context.visitState<AsyncBuilderState<T>>(
-      filter: (state) {
-        if (key == null) return true;
-        keys.add(state.widget.key);
-        return state.widget.key == key;
-      },
+    return context.visitState(
+      assertType: 'AsyncBuilder',
+      filter: (state) => key == null || state.widget.key == key,
     );
-    final byKey = key != null ? ' by key $key' : '';
-    final found = keys.isNotEmpty ? 'Found $keys.' : '';
-    assert(state != null, 'No AsyncBuilder$byKey at this context. $found');
-    return state!;
   }
 
   @override

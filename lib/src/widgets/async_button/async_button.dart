@@ -24,8 +24,12 @@ extension AsyncButtonExtension<T extends ButtonStyleButton> on T {
   ///
   /// Each async state is handled by [AsyncButtonConfig].
   ///
+  /// The only property that is not copied is [clipBehavior]. This is because
+  /// [AsyncButton] uses [Clip.hardEdge] by default. It's needed to avoid
+  /// out of bounds content when animating the size.
   AsyncButton<T> asAsync({
     AsyncButtonConfig? config,
+    Clip clipBehavior = Clip.hardEdge,
   }) =>
       AsyncButton._from[T].orThrow(
         //Extended.
