@@ -21,8 +21,6 @@ class AsyncIndicator extends CircularProgressIndicator {
   const AsyncIndicator({
     super.key,
     this.visible = true,
-    this.alignment = Alignment.center,
-    this.margin = const EdgeInsets.all(8),
     this.minStrokeWidth = 2,
     this.maxStrokeWidth = 4,
     this.maxDimension = 36,
@@ -41,7 +39,6 @@ class AsyncIndicator extends CircularProgressIndicator {
   static Widget linear({
     Key? key,
     bool visible = true,
-    AlignmentGeometry? alignment = Alignment.topCenter,
     double? value,
     Color? backgroundColor,
     Color? color,
@@ -52,14 +49,10 @@ class AsyncIndicator extends CircularProgressIndicator {
     BorderRadiusGeometry borderRadius = BorderRadius.zero,
     Widget? child,
   }) {
-    Widget linear = Visibility(
+    final linear = Visibility(
       visible: visible,
       child: const LinearProgressIndicator(),
     );
-
-    if (alignment != null) {
-      linear = Align(alignment: alignment, child: linear);
-    }
 
     if (child == null) return linear;
     return Stack(
@@ -70,12 +63,6 @@ class AsyncIndicator extends CircularProgressIndicator {
 
   /// Whether to show the indicator.
   final bool visible;
-
-  /// How to align the indicator.
-  final AlignmentGeometry? alignment;
-
-  /// The margin of the indicator.
-  final EdgeInsetsGeometry margin;
 
   /// The minimum stroke width of the indicator.
   final double minStrokeWidth;
@@ -98,51 +85,44 @@ class _AsyncIndicatorState extends State<AsyncIndicator> {
   Widget build(BuildContext context) {
     final loader = Visibility(
       visible: widget.visible,
-      child: Padding(
-        padding: widget.margin,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // constrain the dimension to maxDimension
-            final dimension = math.min(
-              constraints.biggest.shortestSide,
-              widget.maxDimension,
-            );
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // constrain the dimension to maxDimension
+          final dimension = math.min(
+            constraints.biggest.shortestSide,
+            widget.maxDimension,
+          );
 
-            // let maxStrokWidth depend on maxDimension to scale it
-            final strokeRatio = widget.maxDimension / widget.maxStrokeWidth;
+          // let maxStrokWidth depend on maxDimension to scale it
+          final strokeRatio = widget.maxDimension / widget.maxStrokeWidth;
 
-            // let it scale linearly between min and max stroke width
-            final strokeWidth = (dimension / strokeRatio).clamp(
-              widget.minStrokeWidth,
-              widget.maxStrokeWidth,
-            );
+          // let it scale linearly between min and max stroke width
+          final strokeWidth = (dimension / strokeRatio).clamp(
+            widget.minStrokeWidth,
+            widget.maxStrokeWidth,
+          );
 
-            return AdaptiveTheme(
-              child: SizedBox.square(
-                dimension: dimension, // 1:1 aspect ratio
-                child: CircularProgressIndicator(
-                  value: widget.value,
-                  backgroundColor: widget.backgroundColor,
-                  color: widget.color,
-                  valueColor: widget.valueColor,
-                  strokeWidth: strokeWidth,
-                  strokeAlign: widget.strokeAlign,
-                  semanticsLabel: widget.semanticsLabel,
-                  semanticsValue: widget.semanticsValue,
-                  strokeCap: widget.strokeCap,
-                ),
+          return AdaptiveTheme(
+            child: SizedBox.square(
+              dimension: dimension, // 1:1 aspect ratio
+              child: CircularProgressIndicator(
+                value: widget.value,
+                backgroundColor: widget.backgroundColor,
+                color: widget.color,
+                valueColor: widget.valueColor,
+                strokeWidth: strokeWidth,
+                strokeAlign: widget.strokeAlign,
+                semanticsLabel: widget.semanticsLabel,
+                semanticsValue: widget.semanticsValue,
+                strokeCap: widget.strokeCap,
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
 
     var child = widget.child ?? loader;
-
-    if (widget.alignment != null) {
-      child = Align(alignment: widget.alignment!, child: child);
-    }
 
     if (widget.child != null) {
       child = Stack(

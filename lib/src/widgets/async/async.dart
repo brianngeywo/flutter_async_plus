@@ -72,7 +72,7 @@ class Async extends StatelessWidget {
     if (builder != null) return builder(context);
 
     // default
-    return const AsyncIndicator(alignment: null);
+    return const AsyncIndicator();
   }
 
   /// Returns [AsyncConfig.reloadingBuilder] or default.
@@ -81,7 +81,10 @@ class Async extends StatelessWidget {
     if (builder != null) return builder(context);
 
     // default
-    return AsyncIndicator.linear();
+    return Align(
+      alignment: Alignment.topCenter,
+      child: AsyncIndicator.linear(),
+    );
   }
 
   @override

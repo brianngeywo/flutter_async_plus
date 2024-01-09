@@ -13,7 +13,7 @@ Use async as scope to provide custom [AsyncConfig]:
       config: AsyncConfig(
         loadingBuilder: (_) => CircurlarProgressIndicator(),
         textButtonConfig: AsyncButtonConfig(
-          loader: (_) => const Text('loading'),
+          loadingBuilder: (_) => const Text('loading'),
         ),
       ),
       child: // your scope.
