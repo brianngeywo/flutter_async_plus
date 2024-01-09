@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.3 - Jan 09, 2023
+
+- Fix _InputPadding sizing conflicts with AsyncButton.
+
 ## 0.6.2 - Nov 07, 2023
 
 - Changes default clipBehavior to hardEdge to AsyncButton as it's neeed to avoid out of bounds animations.
