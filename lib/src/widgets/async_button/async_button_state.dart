@@ -5,12 +5,6 @@ class AsyncButtonState<T extends ButtonStyleButton>
     extends AsyncState<AsyncButton<T>, void> {
   AsyncButtonResolvedConfig get _config => widget.configOf(context);
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _size = context.size);
-  }
-
   /// Invokes [AsyncButton.onPressed] programatically.
   void press() {
     if (widget.onPressed != null) {
@@ -32,6 +26,12 @@ class AsyncButtonState<T extends ButtonStyleButton>
     super.onError(error, stackTrace);
     _cancelTimer?.cancel();
     _cancelTimer = Timer(_config.errorDuration, cancel);
+  }
+
+  void _setSize(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _size ??= context.size;
+    });
   }
 
   Timer? _cancelTimer;
@@ -78,7 +78,7 @@ class AsyncButtonState<T extends ButtonStyleButton>
       );
     }
 
-    child = AnimatedValue<ButtonStyle?>(
+    return AnimatedValue<ButtonStyle?>(
       value: style,
       duration: _config.styleDuration,
       curve: _config.styleCurve,
@@ -94,23 +94,23 @@ class AsyncButtonState<T extends ButtonStyleButton>
           autofocus: widget.autofocus,
           clipBehavior: widget.clipBehavior,
           statesController: widget.statesController,
-          child: child ?? const SizedBox.shrink(),
+          child: Builder(
+            builder: (context) {
+              if (_size == null) _setSize(context);
+              return SizedBox(
+                height: _config.keepHeight ? _size?.height : null,
+                width: _config.keepWidth ? _size?.width : null,
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+          ),
         );
       },
       child: child,
     );
-
-    if (_config.keepHeight || _config.keepWidth) {
-      child = SizedBox(
-        height: _config.keepHeight ? _size?.height : null,
-        width: _config.keepWidth ? _size?.width : null,
-        child: child,
-      );
-    }
-
-    return child;
   }
 }
+
 extension<T extends Object> on T? {
   T get orThrow {
     assert(
