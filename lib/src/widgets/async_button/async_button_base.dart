@@ -115,7 +115,6 @@ abstract class AsyncButton<T extends ButtonStyleButton>
       errorBuilder: config.errorBuilder ?? Async.errorBuilder,
       loadingBuilder: config.loadingBuilder ?? Async.loadingBuilder,
     );
-    
 
     return config.resolve();
   }
