@@ -7,7 +7,7 @@ environment:
   sdk: '>=2.18.0 <4.0.0'
 
 dependencies:
-  async_notifier: ^0.2.3
+  async_notifier: ^0.3.1
   flutter_async:
     path: ../
   flutter:

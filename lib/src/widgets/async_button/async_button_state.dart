@@ -44,9 +44,7 @@ class AsyncButtonState<T extends ButtonStyleButton>
     var style = widget.styleOf(context);
 
     // ? (arthurbcd): maybe callback the styles ?
-    style = async.snapshot.when(
-      data: (_) => style,
-      loading: () => style,
+    style = async.snapshot.maybeWhen(
       error: (e, s) => style.copyWith(
         backgroundColor: () {
           if (T == OutlinedButton) return null;
@@ -59,12 +57,13 @@ class AsyncButtonState<T extends ButtonStyleButton>
           return MaterialStatePropertyAll(theme.colorScheme.error);
         }(),
       ),
+      orElse: () => style,
     );
 
-    var child = async.snapshot.when(
-      data: (_) => widget.child,
+    var child = async.snapshot.maybeWhen(
       error: (e, s) => _config.errorBuilder(context, e, s),
       loading: () => _config.loadingBuilder(context),
+      orElse: () => widget.child,
     );
 
     if (_config.animateSize) {
