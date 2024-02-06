@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.4 - Feb 06, 2024
+
+- Bump `async_notifier` to 0.3.0.
+
 ## 0.6.3 - Jan 09, 2023
 
 - Fix _InputPadding sizing conflicts with AsyncButton.
