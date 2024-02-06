@@ -11,13 +11,8 @@ class AsyncIndicator extends CircularProgressIndicator {
   /// The color and backgroundColor are automatically resolved based on the
   /// nearest [Theme] ancestor and it's contrast ratio. See [AdaptiveTheme].
   ///
-  /// The aspect ratio of the [CircularProgressIndicator] is always 1:1. It's
-  /// size is always the shortest side of the parent plus [margin].
-  ///
   /// The stroke also linearly depends on the shortest side of the parent.
   ///
-  /// By default, the [CircularProgressIndicator] is centered. You can turn it
-  /// off by setting [alignment] to null.
   const AsyncIndicator({
     super.key,
     this.visible = true,

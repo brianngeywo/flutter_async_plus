@@ -26,7 +26,6 @@ class MyWidget extends StatelessWidget {
   Future<int> onPressed() async {
     await Future.delayed(duration);
     throw 'Some really long message error';
-    return 5;
   }
 
   @override
