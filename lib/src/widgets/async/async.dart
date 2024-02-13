@@ -4,9 +4,6 @@ import '../../configs/async_config.dart';
 import '../../utils/adaptive_theme.dart';
 import '../async_indicator/async_indicator.dart';
 
-/// [Widget] wrapper callback.
-typedef WidgetWrapper = Widget Function(BuildContext context, Widget child);
-
 /// A signature for the `AsyncBuilder` function.
 typedef DataBuilder<T> = Widget Function(BuildContext context, T data);
 
@@ -17,21 +14,20 @@ typedef ErrorBuilder = Widget Function(
   StackTrace stackTrace,
 );
 
+/// A signature for the [Async.loadingBuilder] function.
+typedef AsyncThemeBuilder = ThemeData Function(BuildContext context);
+
 /// Async scope for flutter_async.
 class Async extends StatelessWidget {
   /// Creates an [Async] widget.
   const Async({
     super.key,
-    this.wrapper,
     required this.config,
     required this.child,
   });
 
   /// The config to be providen below this [Async].
   final AsyncConfig config;
-
-  /// Utility [WidgetWrapper] for [Async.child].
-  final WidgetWrapper? wrapper;
 
   /// The child of this [Async].
   final Widget child;
@@ -60,10 +56,29 @@ class Async extends StatelessWidget {
     var message = e.toString();
     try {
       // ignore: avoid_dynamic_calls
-      message = (e as dynamic).message as String;
+      if (e is Exception) message = (e as dynamic).message as String;
     } catch (_) {}
 
-    return AdaptiveTheme(child: Text(message));
+    final layout = LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 120) return Text(message);
+        return Tooltip(
+          message: message,
+          child: SizedBox(
+            width: constraints.maxWidth,
+            child: const Text('!', textAlign: TextAlign.center),
+          ),
+        );
+      },
+    );
+
+    return AdaptiveTheme(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [layout],
+      ),
+    );
   }
 
   /// Returns [AsyncConfig.loadingBuilder] or default.
@@ -77,7 +92,7 @@ class Async extends StatelessWidget {
 
   /// Returns [AsyncConfig.reloadingBuilder] or default.
   static Widget reloadingBuilder(BuildContext context) {
-    final builder = Async.of(context).reloadingBuilder;
+    final builder = of(context).reloadingBuilder;
     if (builder != null) return builder(context);
 
     // default
@@ -87,20 +102,38 @@ class Async extends StatelessWidget {
     );
   }
 
+  /// Returns the default [ThemeData] for error state.
+  static ThemeData errorThemer(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.copyWith(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: theme.colorScheme.error,
+        brightness: theme.brightness,
+      ),
+    );
+  }
+
+  /// Returns the default [ThemeData] for success state.
+  static ThemeData successThemer(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme;
+  }
+
+  /// Returns the default [ThemeData] for loading state.
+  static ThemeData loadingThemer(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        Widget child = _InheritedAsync(
+        return _InheritedAsync(
           config: config,
-          child: this.child,
+          child: child,
         );
-
-        if (wrapper != null) {
-          child = wrapper!(context, child);
-        }
-
-        return child;
       },
     );
   }

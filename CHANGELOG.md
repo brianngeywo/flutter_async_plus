@@ -2,6 +2,51 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.7.1 - Feb 13, 2024
+
+- Fix missing dispose on `AsyncButtonBuilder`.
+
+## 0.7.0 - Feb 10, 2024
+
+- Added `AsyncButtonBuilder`. Create your own async button by just wrapping your widget with `AsyncButtonBuilder`. This is now also the base for all async buttons.
+
+- Added async `FloatingActionButton` and all its possible variations:
+  - `AsyncFloatingActionButton`;
+  - `AsyncFloatingActionButton.small`;
+  - `AsyncFloatingActionButton.large`;
+  - `AsyncFloatingActionButton.extended`.
+  - Or simply the variant with `.asAsync` extension.
+
+- Updated all possible async variations for all `ButtonStyleButton`:
+  - `AsyncElevatedButton` and `AsyncElevatedButton.icon`;
+  - `AsyncOutlinedButton` and `AsyncOutlinedButton.icon`;
+  - `AsyncTextButton` and `AsyncTextButton.icon`;
+  - `AsyncFilledButton` and `AsyncFilledButton.icon`;
+  - `AsyncFilledButton.tonal` and `AsyncFilledButton.tonalIcon`.
+  - Or simply the variant with `.asAsync` extension.
+
+- Updated `AsyncIndicator` to automatically calculate the size based on the parent widget, following the Material Design guidelines.
+  - Added `AsyncIndicator.sizeRatio` to manually adjust the ratio.
+  - `AsyncIndicator.minDimension` and `AsyncIndicator.maxDimension` to set the bounds.
+
+- Added `AsyncButtonConfig.successBuilder`. An optional builder to customize the success state (for buttons).
+
+- Added `AsyncThemer`, so you can easily theme all async buttons states.
+  - `AsyncButtonConfig.errorThemer`;
+  - `AsyncButtonConfig.loadingThemer`;
+  - `AsyncButtonConfig.successThemer`;
+
+- Added `AsyncButtonConfig.icon` shorthand constructor to set icon widgets or seeded colors when the builders aren't needed.
+
+- Added shortcuts to all `.asAsync` extensions.
+
+Some breaking changes were made to improve the library and make it simpler, more consistent and predictable.
+
+- Removed Async.at and AsyncButton.maybeAt static methods.
+- Removed Async.wrapper and AsyncBuilder.wrapper parameters.
+- `Async.errorBuilder` now will try to extract `Exception.message` by default only on `Exception` instances.
+- `Async.errorBuilder` will collapse to '!' and the error will appear as a tooltip when there is no space.
+
 ## 0.6.5 - Feb 06, 2024
 
 - Added Future extensions: `orFalse`, `orNull` and `thenOrNull`.

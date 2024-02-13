@@ -10,13 +10,43 @@ class AsyncButtonConfig {
     this.keepWidth,
     this.animateSize,
     this.animatedSizeConfig,
-    // this.clipBehavior,
     this.errorDuration,
+    this.successDuration,
     this.styleDuration,
     this.styleCurve,
     this.loadingBuilder,
+    this.successBuilder,
     this.errorBuilder,
+    this.errorThemer,
+    this.loadingThemer,
+    this.successThemer,
   });
+
+  /// Shorthand for a [AsyncButtonConfig] with widgets instead of builders and
+  /// colors instead of themers.
+  ///
+  /// The colors will be used to create a [ThemeData] with [ColorScheme.fromSeed].
+  AsyncButtonConfig.icon({
+    this.keepHeight,
+    this.keepWidth,
+    this.animateSize,
+    this.animatedSizeConfig,
+    this.errorDuration,
+    this.successDuration,
+    this.styleDuration,
+    this.styleCurve,
+    Color? loadingColor,
+    Color? successColor,
+    Color? errorColor,
+    Widget? loadingIcon,
+    Widget? successIcon,
+    Widget? errorIcon,
+  })  : loadingBuilder = (loadingIcon != null ? (_) => loadingIcon : null),
+        successBuilder = (successIcon != null ? (_) => successIcon : null),
+        errorBuilder = (errorIcon != null ? (_, e, s) => errorIcon : null),
+        errorThemer = errorColor?.asSeedOf,
+        loadingThemer = loadingColor?.asSeedOf,
+        successThemer = successColor?.asSeedOf;
 
   /// Whether to keep button height on state changes. Defaults to `true`.
   final bool? keepHeight;
@@ -30,11 +60,11 @@ class AsyncButtonConfig {
   /// The configuration for [AnimatedSize].
   final AnimatedSizeConfig? animatedSizeConfig;
 
-  /// The clip behavior of AsyncButton.
-  // final Clip? clipBehavior;
-
   /// The duration to show error widget.
   final Duration? errorDuration;
+
+  /// The duration to show success widget.
+  final Duration? successDuration;
 
   /// The duration between styles animations.
   final Duration? styleDuration;
@@ -45,9 +75,35 @@ class AsyncButtonConfig {
   /// The widget to show on loading.
   final WidgetBuilder? loadingBuilder;
 
+  /// The widget to show on success.
+  final WidgetBuilder? successBuilder;
+
   /// The widget to show on error.
   final ErrorBuilder? errorBuilder;
+
+  /// The theme to use on error.
+  final AsyncThemer? errorThemer;
+
+  /// The theme to use on loading.
+  final AsyncThemer? loadingThemer;
+
+  /// The theme to use on success.
+  final AsyncThemer? successThemer;
 }
+
+extension on Color {
+  ThemeData asSeedOf(BuildContext context) {
+    return Theme.of(context).copyWith(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: this,
+        brightness: Theme.of(context).brightness,
+      ),
+    );
+  }
+}
+
+///
+typedef AsyncThemer = ThemeData Function(BuildContext context);
 
 /// Configuration for [AnimatedSize].
 class AnimatedSizeConfig {
@@ -87,12 +143,16 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
     this.keepWidth = false,
     this.animateSize = true,
     this.animatedSizeConfig = const AnimatedSizeConfig(),
-    // this.clipBehavior = Clip.hardEdge,
     this.errorDuration = const Duration(seconds: 3),
+    this.successDuration = const Duration(seconds: 3),
     this.styleCurve = Curves.easeInOut,
     this.styleDuration = const Duration(milliseconds: 300),
     this.errorBuilder = Async.errorBuilder,
     this.loadingBuilder = Async.loadingBuilder,
+    this.successBuilder,
+    this.errorThemer = Async.errorThemer,
+    this.loadingThemer = Async.loadingThemer,
+    this.successThemer = Async.successThemer,
   });
 
   @override
@@ -108,10 +168,10 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
   final AnimatedSizeConfig animatedSizeConfig;
 
   @override
-  // final Clip clipBehavior;
+  final Duration errorDuration;
 
   @override
-  final Duration errorDuration;
+  final Duration successDuration;
 
   @override
   final Curve styleCurve;
@@ -124,6 +184,18 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
 
   @override
   final WidgetBuilder loadingBuilder;
+
+  @override
+  final WidgetBuilder? successBuilder;
+
+  @override
+  final AsyncThemer errorThemer;
+
+  @override
+  final AsyncThemer loadingThemer;
+
+  @override
+  final AsyncThemer successThemer;
 }
 
 ///
@@ -134,24 +206,32 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
     bool? keepWidth,
     bool? animateSize,
     AnimatedSizeConfig? animatedSizeConfig,
-    Clip? clipBehavior,
     Duration? errorDuration,
+    Duration? successDuration,
     Duration? styleDuration,
     Curve? styleCurve,
     WidgetBuilder? loadingBuilder,
+    WidgetBuilder? successBuilder,
     ErrorBuilder? errorBuilder,
+    AsyncThemer? errorThemer,
+    AsyncThemer? loadingThemer,
+    AsyncThemer? successThemer,
   }) {
     return AsyncButtonConfig(
       keepHeight: keepHeight ?? this.keepHeight,
       keepWidth: keepWidth ?? this.keepWidth,
       animateSize: animateSize ?? this.animateSize,
       animatedSizeConfig: animatedSizeConfig ?? this.animatedSizeConfig,
-      // clipBehavior: clipBehavior ?? this.clipBehavior,
       errorDuration: errorDuration ?? this.errorDuration,
+      successDuration: successDuration ?? this.successDuration,
       styleDuration: styleDuration ?? this.styleDuration,
       styleCurve: styleCurve ?? this.styleCurve,
       loadingBuilder: loadingBuilder ?? this.loadingBuilder,
+      successBuilder: successBuilder ?? this.successBuilder,
       errorBuilder: errorBuilder ?? this.errorBuilder,
+      errorThemer: errorThemer ?? this.errorThemer,
+      loadingThemer: loadingThemer ?? this.loadingThemer,
+      successThemer: successThemer ?? this.successThemer,
     );
   }
 
@@ -163,12 +243,16 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
       keepWidth: keepWidth ?? other.keepWidth,
       animateSize: animateSize ?? other.animateSize,
       animatedSizeConfig: animatedSizeConfig ?? other.animatedSizeConfig,
-      // clipBehavior: clipBehavior ?? other.clipBehavior,
       errorDuration: errorDuration ?? other.errorDuration,
+      successDuration: successDuration ?? other.successDuration,
       styleDuration: styleDuration ?? other.styleDuration,
       styleCurve: styleCurve ?? other.styleCurve,
       loadingBuilder: loadingBuilder ?? other.loadingBuilder,
+      successBuilder: successBuilder ?? other.successBuilder,
       errorBuilder: errorBuilder ?? other.errorBuilder,
+      errorThemer: errorThemer ?? other.errorThemer,
+      loadingThemer: loadingThemer ?? other.loadingThemer,
+      successThemer: successThemer ?? other.successThemer,
     );
   }
 
@@ -181,12 +265,16 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
       keepWidth: keepWidth ?? def.keepWidth,
       animateSize: animateSize ?? def.animateSize,
       animatedSizeConfig: animatedSizeConfig ?? def.animatedSizeConfig,
-      // clipBehavior: clipBehavior ?? def.clipBehavior,
       errorDuration: errorDuration ?? def.errorDuration,
+      successDuration: successDuration ?? def.successDuration,
       styleCurve: styleCurve ?? def.styleCurve,
       styleDuration: styleDuration ?? def.styleDuration,
       errorBuilder: errorBuilder ?? def.errorBuilder,
       loadingBuilder: loadingBuilder ?? def.loadingBuilder,
+      successBuilder: successBuilder ?? def.successBuilder,
+      errorThemer: errorThemer ?? def.errorThemer,
+      loadingThemer: loadingThemer ?? def.loadingThemer,
+      successThemer: successThemer ?? def.successThemer,
     );
   }
 }

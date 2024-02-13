@@ -24,6 +24,7 @@ class AsyncConfig {
     this.filledButtonConfig,
     this.elevatedButtonConfig,
     this.outlinedButtonConfig,
+    this.floatingActionButtonConfig,
   });
 
   /// The general [WidgetBuilder] for none state.
@@ -56,6 +57,9 @@ class AsyncConfig {
   /// The config for `AsyncOutlinedButton`. Overrides [buttonConfig].
   final AsyncButtonConfig? outlinedButtonConfig;
 
+  /// The config for `AsyncFloatingActionButton`. Overrides general builders.
+  final AsyncButtonConfig? floatingActionButtonConfig;
+
   /// Copies this [AsyncConfig] with the given fields replaced with the new values.
   AsyncConfig copyWith({
     WidgetBuilder? noneBuilder,
@@ -68,6 +72,7 @@ class AsyncConfig {
     AsyncButtonConfig? filledButtonConfig,
     AsyncButtonConfig? textButtonConfig,
     AsyncButtonConfig? outlinedButtonConfig,
+    AsyncButtonConfig? floatingActionButtonConfig,
   }) {
     return AsyncConfig(
       noneBuilder: noneBuilder ?? this.noneBuilder,
@@ -80,6 +85,8 @@ class AsyncConfig {
       filledButtonConfig: filledButtonConfig ?? this.filledButtonConfig,
       elevatedButtonConfig: elevatedButtonConfig ?? this.elevatedButtonConfig,
       outlinedButtonConfig: outlinedButtonConfig ?? this.outlinedButtonConfig,
+      floatingActionButtonConfig:
+          floatingActionButtonConfig ?? this.floatingActionButtonConfig,
     );
   }
 
@@ -97,6 +104,8 @@ class AsyncConfig {
       filledButtonConfig: filledButtonConfig ?? other.filledButtonConfig,
       elevatedButtonConfig: elevatedButtonConfig ?? other.elevatedButtonConfig,
       outlinedButtonConfig: outlinedButtonConfig ?? other.outlinedButtonConfig,
+      floatingActionButtonConfig:
+          floatingActionButtonConfig ?? other.floatingActionButtonConfig,
     );
   }
 }

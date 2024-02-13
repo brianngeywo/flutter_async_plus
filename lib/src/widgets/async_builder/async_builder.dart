@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:async_notifier/async_notifier.dart';
 import 'package:flutter/material.dart';
 
-import '../../extensions/context.dart';
 import '../../utils/async_state.dart';
 import '../async/async.dart';
 
@@ -16,7 +15,6 @@ class AsyncBuilder<T> extends StatefulWidget {
     this.initialData,
     this.future,
     this.stream,
-    this.wrapper,
     this.alignment = Alignment.center,
     this.noneBuilder = _noneBuilder,
     this.errorBuilder = _errorBuilder,
@@ -42,7 +40,6 @@ class AsyncBuilder<T> extends StatefulWidget {
     this.interval,
     Future<T> Function()? future,
     Stream<T> Function()? stream,
-    this.wrapper,
     this.alignment = Alignment.center,
     this.noneBuilder = _noneBuilder,
     this.errorBuilder = _errorBuilder,
@@ -108,13 +105,10 @@ class AsyncBuilder<T> extends StatefulWidget {
   /// How builders should be aligned.
   final AlignmentGeometry? alignment;
 
-  /// An utility wrapper around all builders.
-  final WidgetWrapper? wrapper;
-
   /// Whether to skip reloading state.
   final bool skipReloading;
 
-  /// The [WidgetWrapper] to wrap on [builder] or [errorBuilder] while reloading.
+  /// The [WidgetBuilder] to show while reloading and has error or data.
   final WidgetBuilder reloadingBuilder;
 
   /// The [WidgetBuilder] to show while error and data are null.
@@ -134,15 +128,6 @@ class AsyncBuilder<T> extends StatefulWidget {
     final state = context.findAncestorStateOfType<AsyncBuilderState<T>>();
     assert(state != null, 'No AsyncBuilder of this context');
     return state!;
-  }
-
-  /// Returns the first [AsyncBuilderState] below this [context].
-  /// Filters by [key], if given.
-  static AsyncBuilderState<T> at<T>(BuildContext context, {Key? key}) {
-    return context.visitState(
-      assertType: 'AsyncBuilder',
-      filter: (state) => key == null || state.widget.key == key,
-    );
   }
 
   @override
@@ -230,10 +215,6 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
               if (async.isReloading) widget.reloadingBuilder(context),
             ],
           );
-        }
-
-        if (widget.wrapper != null) {
-          child = widget.wrapper!(context, child);
         }
 
         return child;

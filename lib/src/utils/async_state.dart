@@ -23,6 +23,9 @@ abstract class AsyncState<T extends StatefulWidget, Data> extends State<T> {
   @mustCallSuper
   void onData(Data data) {}
 
+  /// Called whenever [AsyncSnapshot] changes.
+  void onSnapshot(AsyncSnapshot<Data> snapshot) {}
+
   /// Performs [AsyncNotifier.cancel] on current async computation.
   @mustCallSuper
   void cancel() => async.cancel();
@@ -30,7 +33,7 @@ abstract class AsyncState<T extends StatefulWidget, Data> extends State<T> {
   @override
   void initState() {
     super.initState();
-    async.addListener(() => setState(() {}));
+    async.addListener(() => setState(() => onSnapshot(async.snapshot)));
   }
 
   @override
