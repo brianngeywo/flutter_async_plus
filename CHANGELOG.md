@@ -2,6 +2,13 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.0 - Apr 30, 2024
+
+- Bumped to Dart 3.0.0.
+- Added `Exception.message` extension.
+- Added `Async.message`, which extracts the message from an `Object` or `Exception`.
+- Now `Async.errorBuilder` uses `Async.message` by default and handles `ParallelWaitError` messages gracefully.
+
 ## 0.7.1 - Feb 13, 2024
 
 - Fix missing dispose on `AsyncButtonBuilder`.

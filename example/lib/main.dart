@@ -24,7 +24,11 @@ class MyWidget extends StatelessWidget {
 
   Future<void> onError() async {
     await Future.delayed(duration);
-    throw 'Some error message';
+    throw ParallelWaitError<List, List>([], [
+      'Invalid user',
+      'The email is already in use',
+      'The password is too weak.',
+    ]);
   }
 
   Future<void> onSuccess() async {

@@ -38,6 +38,19 @@ class Async extends StatelessWidget {
     return scope?.config ?? const AsyncConfig();
   }
 
+  /// Returns the message of an error.
+  static String message(Object? e) {
+    var message = e.toString();
+    try {
+      if (e is ParallelWaitError<dynamic, Iterable>) {
+        final messages = e.errors.map(Async.message);
+        message = messages.map((e) => e.endsWith('.') ? e : '$e.').join(' ');
+      }
+      if (e is Exception) message = e.message;
+    } catch (_) {}
+    return message;
+  }
+
   /// Returns [AsyncConfig.noneBuilder] or default.
   static Widget noneBuilder(BuildContext context) {
     final builder = of(context).noneBuilder;
@@ -49,15 +62,11 @@ class Async extends StatelessWidget {
 
   /// Returns [AsyncConfig.errorBuilder] or default.
   static Widget errorBuilder(BuildContext context, Object e, StackTrace s) {
+
     final builder = of(context).errorBuilder;
     if (builder != null) return builder(context, e, s);
 
-    // default
-    var message = e.toString();
-    try {
-      // ignore: avoid_dynamic_calls
-      if (e is Exception) message = (e as dynamic).message as String;
-    } catch (_) {}
+    final message = Async.message(e);
 
     final layout = LayoutBuilder(
       builder: (context, constraints) {
@@ -125,7 +134,6 @@ class Async extends StatelessWidget {
     return theme;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Builder(
@@ -150,4 +158,16 @@ class _InheritedAsync extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_InheritedAsync oldWidget) => false;
+}
+
+/// Message of an exception.
+extension AsyncMessageException on Exception {
+  /// Returns the message of this exception.
+  String get message {
+    try {
+      return (this as dynamic).message as String;
+    } catch (_) {
+      return toString();
+    }
+  }
 }
