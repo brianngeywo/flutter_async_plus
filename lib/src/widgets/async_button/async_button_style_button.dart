@@ -336,7 +336,7 @@ extension AsyncButtonExtension on ButtonStyleButton {
           onFocusChange: onFocusChange,
           focusNode: focusNode,
           autofocus: autofocus,
-          clipBehavior: clipBehavior.index > 0 ? clipBehavior : Clip.hardEdge,
+          clipBehavior: clipBehavior ?? Clip.hardEdge,
           statesController: statesController,
           child: child,
         );
@@ -383,6 +383,7 @@ extension on ButtonStyleButton {
   }
 }
 
+// ignore: deprecated_member_use
 extension<T> on MaterialStateProperty<T?> {
   T? get base => resolve({});
 }

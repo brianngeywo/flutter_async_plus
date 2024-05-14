@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.1 - May 14, 2024
+
+- Fix nullable `ButtonStyleButton.clipBehavior` behavior update in Flutter 3.22.
+
 ## 0.8.0 - Apr 30, 2024
 
 - Bumped to Dart 3.0.0.
