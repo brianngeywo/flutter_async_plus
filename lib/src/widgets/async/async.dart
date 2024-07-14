@@ -38,17 +38,35 @@ class Async extends StatelessWidget {
     return scope?.config ?? const AsyncConfig();
   }
 
-  /// Returns the message of an error.
-  static String message(Object? e) {
-    var message = e.toString();
+  /// Adds a error translator to any [Async.message].
+  ///
+  /// You can use this to translate errors to a more user-friendly message.
+  ///
+  /// ```dart
+  /// Async.translator = (e) => switch (e) {
+  ///   ArgumentError e => '${e.name} is invalid',
+  ///   _ => Async.defaultMessage,
+  /// }
+  /// ```
+  static String Function(Object? e) translator = defaultMessage;
+
+  /// Extracts the message of an error.
+  ///
+  /// This is used by any [Async.errorBuilder]. You can override this
+  /// by setting [Async.translator].
+  ///
+  static String message(Object? e) => translator(e);
+
+  /// The library default error message.
+  static String defaultMessage(Object? e) {
     try {
       if (e is ParallelWaitError<dynamic, Iterable>) {
         final messages = e.errors.map(Async.message);
-        message = messages.map((e) => e.endsWith('.') ? e : '$e.').join(' ');
+        return messages.map((e) => e.endsWith('.') ? e : '$e.').join(' ');
       }
-      if (e is Exception) message = e.message;
+      if (e is Exception) return e.message;
     } catch (_) {}
-    return message;
+    return e.toString();
   }
 
   /// Returns [AsyncConfig.noneBuilder] or default.
@@ -62,7 +80,6 @@ class Async extends StatelessWidget {
 
   /// Returns [AsyncConfig.errorBuilder] or default.
   static Widget errorBuilder(BuildContext context, Object e, StackTrace s) {
-
     final builder = of(context).errorBuilder;
     if (builder != null) return builder(context, e, s);
 

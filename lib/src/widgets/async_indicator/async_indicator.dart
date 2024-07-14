@@ -85,18 +85,30 @@ class AsyncIndicator extends CircularProgressIndicator {
 }
 
 class _AsyncIndicatorState extends State<AsyncIndicator> {
+  Size? size;
+
+  void setSize(Size? size) {
+    if (this.size == null) {
+      setState(() => this.size = size);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => setSize(context.size));
+
     final loader = Visibility(
       visible: widget.visible,
-      child: LayoutBuilder(
-        builder: (context, box) {
+      child: Builder(
+        builder: (context) {
+          final size = this.size ?? Size.zero;
+
           // constrain the dimension to maxDimension
-          final dimension = (box.biggest.shortestSide * widget.sizeRatio).clamp(
+          final dimension = (size.shortestSide * widget.sizeRatio).clamp(
             widget.minDimension,
             widget.maxDimension,
           );
-          
+
           // let maxStrokWidth depend on maxDimension to scale it
           final strokeRatio = widget.maxStrokeWidth / widget.maxDimension;
 

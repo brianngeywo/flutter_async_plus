@@ -218,7 +218,7 @@ extension AsyncFloatingActionButtonExtension on FloatingActionButton {
                 key: key,
                 icon: child, //
                 label: fab.label!, //
-                onPressed: state.press, //
+                onPressed: state.onPressed, //
                 isExtended: false, // `fab.resolvedChild` replicates this
                 clipBehavior: Clip.values[clipBehavior.index.clamp(1, 9)], //
                 mouseCursor: mouseCursor,
@@ -249,10 +249,14 @@ extension AsyncFloatingActionButtonExtension on FloatingActionButton {
               if (fab.isLarge) return FloatingActionButton.large;
               return FloatingActionButton.new;
             }();
+
             return button(
+              // mods
+              child: child,
+              onPressed: state.onPressed,
+
+              // props
               key: key,
-              child: child, //
-              onPressed: state.press, //
               mouseCursor: mouseCursor,
               shape: shape,
               clipBehavior: clipBehavior,

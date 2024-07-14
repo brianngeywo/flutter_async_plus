@@ -38,76 +38,100 @@ class MyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: Row(
         children: [
-          AsyncBuilder(
-            future: onError(), // or stream
-            loadingBuilder: (context) {
-              return const CircularProgressIndicator();
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Text(error.toString());
-            },
-            builder: (context, data) {
-              return const Text('data');
-            },
+          Column(
+            children: [
+              AsyncBuilder(
+                future: onError(), // or stream
+                loadingBuilder: (context) {
+                  return const CircularProgressIndicator();
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Text(error.toString());
+                },
+                builder: (context, data) {
+                  return const Text('data');
+                },
+              ),
+              AsyncButtonBuilder(
+                onPressed: onError,
+                child: const FlutterLogo(size: 120),
+                builder: (context, state, child) {
+                  return InkWell(
+                    onTap: state.press,
+                    child: child,
+                  );
+                },
+              ),
+              ElevatedButton(
+                onPressed: onError,
+                child: const Text('ElevatedButton'),
+              ).asAsync(),
+              ElevatedButton.icon(
+                onPressed: onError,
+                label: const Text('ElevatedButton.icon'),
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+              FilledButton(
+                onPressed: onError,
+                child: const Text('FilledButton'),
+              ).asAsync(),
+              FilledButton.icon(
+                onPressed: onError,
+                label: const Text('FilledButton.icon'),
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+              FilledButton.tonal(
+                onPressed: onError,
+                child: const Text('FilledButton.tonal'),
+              ).asAsync(),
+              FilledButton.tonalIcon(
+                onPressed: onError,
+                label: const Text('FilledButton.tonalIcon'),
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+              OutlinedButton(
+                onPressed: onError,
+                child: const Text('OutlinedButton'),
+              ).asAsync(),
+              OutlinedButton.icon(
+                onPressed: onError,
+                label: const Text('OutlinedButton.icon'),
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+              TextButton(
+                onPressed: onError,
+                child: const Text('TextButton'),
+              ).asAsync(),
+              TextButton.icon(
+                onPressed: onError,
+                label: const Text('TextButton.icon'),
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+            ].map((e) => Expanded(child: Center(child: e))).toList(),
           ),
-          AsyncButtonBuilder(
-            onPressed: onError,
-            child: const FlutterLogo(size: 120),
-            builder: (context, state, child) {
-              return InkWell(
-                onTap: state.press,
-                child: child,
-              );
-            },
+          Column(
+            children: [
+              IconButton(
+                onPressed: onError,
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+              IconButton.filled(
+                onPressed: onSuccess,
+                icon: const Icon(Icons.add),
+              ).asAsync(successIcon: const Icon(Icons.check)),
+              IconButton.filledTonal(
+                onPressed: onError,
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+              IconButton.outlined(
+                onPressed: onSuccess,
+                icon: const Icon(Icons.add),
+              ).asAsync(),
+            ],
           ),
-          ElevatedButton(
-            onPressed: onError,
-            child: const Text('ElevatedButton'),
-          ).asAsync(),
-          ElevatedButton.icon(
-            onPressed: onError,
-            label: const Text('ElevatedButton.icon'),
-            icon: const Icon(Icons.add),
-          ).asAsync(),
-          FilledButton(
-            onPressed: onError,
-            child: const Text('FilledButton'),
-          ).asAsync(),
-          FilledButton.icon(
-            onPressed: onError,
-            label: const Text('FilledButton.icon'),
-            icon: const Icon(Icons.add),
-          ).asAsync(),
-          FilledButton.tonal(
-            onPressed: onError,
-            child: const Text('FilledButton.tonal'),
-          ).asAsync(),
-          FilledButton.tonalIcon(
-            onPressed: onError,
-            label: const Text('FilledButton.tonalIcon'),
-            icon: const Icon(Icons.add),
-          ).asAsync(),
-          OutlinedButton(
-            onPressed: onError,
-            child: const Text('OutlinedButton'),
-          ).asAsync(),
-          OutlinedButton.icon(
-            onPressed: onError,
-            label: const Text('OutlinedButton.icon'),
-            icon: const Icon(Icons.add),
-          ).asAsync(),
-          TextButton(
-            onPressed: onError,
-            child: const Text('TextButton'),
-          ).asAsync(),
-          TextButton.icon(
-            onPressed: onError,
-            label: const Text('TextButton.icon'),
-            icon: const Icon(Icons.add),
-          ).asAsync(),
-        ].map((e) => Expanded(child: Center(child: e))).toList(),
+        ],
       ),
 
       // Use Async to scope an [AsyncConfig] to its descendants.
@@ -144,4 +168,32 @@ class MyWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class AsyncSearchBox<T> extends StatelessWidget {
+  const AsyncSearchBox({
+    super.key,
+    required this.search,
+    required this.suggestionBuilder,
+  });
+  final Future<List<T>> Function(String query) search;
+  final Widget Function(BuildContext context, T value) suggestionBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return SearchAnchor.bar(
+      suggestionsBuilder: (context, controller) async {
+        return [
+          for (final value in await search(controller.text))
+            suggestionBuilder(context, value),
+        ];
+      },
+    );
+  }
+}
+
+class Patient {
+  const Patient({this.name = '', this.age = 0});
+  final String name;
+  final int age;
 }

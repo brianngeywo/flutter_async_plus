@@ -60,12 +60,19 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
     }
   }
 
+  /// Returns either [press] or null.
+  VoidCallback? get onPressed => widget.onPressed != null ? press : null;
+
   /// Invokes [AsyncButtonBuilder.onLongPress] programatically.
   void longPress() {
     if (widget.onLongPress != null) {
       async.future = Future(widget.onLongPress!);
     }
   }
+
+  /// Returns either [longPress] or null.
+  VoidCallback? get onLongPress =>
+      widget.onLongPress != null ? longPress : null;
 
   void _setSize(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _size ??= context.size);

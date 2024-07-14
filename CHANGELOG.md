@@ -2,6 +2,27 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.2 - Jun 19, 2024
+
+- Make internal extensions exportable.
+
+## 0.9.1 - Jun 07, 2024
+
+- Added `Async.translator`. This overrides the default error message of any `Async.errorBuilder`.
+
+You can also call it manually with `Async.message` static function.
+
+## 0.9.0 - Jun 01, 2024
+
+- Added async `IconButton` and all its possible variations:
+  - `AsyncIconButton`;
+  - `AsyncIconButton.small`;
+  - `AsyncIconButton.large`;
+  - `AsyncIconButton.extended`.
+  - Or simply the `IconButton` variant with `.asAsync` extension.
+
+- Refactor and minor fixes.
+
 ## 0.8.1 - May 14, 2024
 
 - Fix nullable `ButtonStyleButton.clipBehavior` behavior update in Flutter 3.22.
@@ -23,9 +44,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Added async `FloatingActionButton` and all its possible variations:
   - `AsyncFloatingActionButton`;
-  - `AsyncFloatingActionButton.small`;
-  - `AsyncFloatingActionButton.large`;
-  - `AsyncFloatingActionButton.extended`.
+  - `AsyncFloatingActionButton.filled`;
+  - `AsyncFloatingActionButton.filledTonal`;
+  - `AsyncFloatingActionButton.outlined`.
   - Or simply the variant with `.asAsync` extension.
 
 - Updated all possible async variations for all `ButtonStyleButton`:

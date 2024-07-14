@@ -24,6 +24,7 @@ class AsyncConfig {
     this.filledButtonConfig,
     this.elevatedButtonConfig,
     this.outlinedButtonConfig,
+    this.iconButtonConfig,
     this.floatingActionButtonConfig,
   });
 
@@ -58,6 +59,9 @@ class AsyncConfig {
   final AsyncButtonConfig? outlinedButtonConfig;
 
   /// The config for `AsyncFloatingActionButton`. Overrides general builders.
+  final AsyncButtonConfig? iconButtonConfig;
+
+  /// The config for `AsyncFloatingActionButton`. Overrides general builders.
   final AsyncButtonConfig? floatingActionButtonConfig;
 
   /// Copies this [AsyncConfig] with the given fields replaced with the new values.
@@ -72,6 +76,7 @@ class AsyncConfig {
     AsyncButtonConfig? filledButtonConfig,
     AsyncButtonConfig? textButtonConfig,
     AsyncButtonConfig? outlinedButtonConfig,
+    AsyncButtonConfig? iconButtonConfig,
     AsyncButtonConfig? floatingActionButtonConfig,
   }) {
     return AsyncConfig(
@@ -85,6 +90,7 @@ class AsyncConfig {
       filledButtonConfig: filledButtonConfig ?? this.filledButtonConfig,
       elevatedButtonConfig: elevatedButtonConfig ?? this.elevatedButtonConfig,
       outlinedButtonConfig: outlinedButtonConfig ?? this.outlinedButtonConfig,
+      iconButtonConfig: iconButtonConfig ?? this.iconButtonConfig,
       floatingActionButtonConfig:
           floatingActionButtonConfig ?? this.floatingActionButtonConfig,
     );
@@ -104,6 +110,7 @@ class AsyncConfig {
       filledButtonConfig: filledButtonConfig ?? other.filledButtonConfig,
       elevatedButtonConfig: elevatedButtonConfig ?? other.elevatedButtonConfig,
       outlinedButtonConfig: outlinedButtonConfig ?? other.outlinedButtonConfig,
+      iconButtonConfig: iconButtonConfig ?? other.iconButtonConfig,
       floatingActionButtonConfig:
           floatingActionButtonConfig ?? other.floatingActionButtonConfig,
     );

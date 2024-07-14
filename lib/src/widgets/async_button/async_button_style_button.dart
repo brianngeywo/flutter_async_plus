@@ -220,6 +220,7 @@ class AsyncFilledButton extends FilledButton with _AsyncMixin {
     required Widget icon,
     required Widget label,
   }) : super.tonal(
+          // same variant as FilledButton.tonal
           autofocus: autofocus ?? false,
           clipBehavior: clipBehavior ?? Clip.none,
           child: FilledButton.tonalIcon(
@@ -328,10 +329,13 @@ extension AsyncButtonExtension on ButtonStyleButton {
         }();
 
         return button(
+          // mods
+          onPressed: state.onPressed,
+          onLongPress: state.onLongPress,
+
+          // props
           key: key,
           style: style,
-          onPressed: onPressed != null ? state.press : null,
-          onLongPress: onLongPress != null ? state.longPress : null,
           onHover: onHover,
           onFocusChange: onFocusChange,
           focusNode: focusNode,

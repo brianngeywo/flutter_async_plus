@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../configs/async_config.dart';
+import '../../extensions/element.dart';
 import '../async/async.dart';
 import 'async_button_builder.dart';
 
 /// Async version of [FloatingActionButton].
 class AsyncIconButton extends IconButton {
-  /// Creates a new [AsyncIconButton].
+  /// Creates an async [IconButton].
   const AsyncIconButton({
     super.key,
     this.config = const AsyncButtonConfig(),
@@ -34,6 +35,90 @@ class AsyncIconButton extends IconButton {
     required super.icon,
   });
 
+  /// Creates an async [IconButton.filled].
+  const AsyncIconButton.filled({
+    super.key,
+    this.config = const AsyncButtonConfig(),
+    super.iconSize,
+    super.visualDensity,
+    super.padding,
+    super.alignment,
+    super.splashRadius,
+    super.color,
+    super.focusColor,
+    super.hoverColor,
+    super.highlightColor,
+    super.splashColor,
+    super.disabledColor,
+    required super.onPressed,
+    super.mouseCursor,
+    super.focusNode,
+    super.autofocus = false,
+    super.tooltip,
+    super.enableFeedback,
+    super.constraints,
+    super.style,
+    super.isSelected,
+    super.selectedIcon,
+    required super.icon,
+  }) : super.filled();
+
+  /// Creates an async [IconButton.filledTonal].
+  const AsyncIconButton.filledTonal({
+    super.key,
+    this.config = const AsyncButtonConfig(),
+    super.iconSize,
+    super.visualDensity,
+    super.padding,
+    super.alignment,
+    super.splashRadius,
+    super.color,
+    super.focusColor,
+    super.hoverColor,
+    super.highlightColor,
+    super.splashColor,
+    super.disabledColor,
+    required super.onPressed,
+    super.mouseCursor,
+    super.focusNode,
+    super.autofocus = false,
+    super.tooltip,
+    super.enableFeedback,
+    super.constraints,
+    super.style,
+    super.isSelected,
+    super.selectedIcon,
+    required super.icon,
+  }) : super.filledTonal();
+
+  /// Creates an async [IconButton.outlined].
+  const AsyncIconButton.outlined({
+    super.key,
+    this.config = const AsyncButtonConfig(),
+    super.iconSize,
+    super.visualDensity,
+    super.padding,
+    super.alignment,
+    super.splashRadius,
+    super.color,
+    super.focusColor,
+    super.hoverColor,
+    super.highlightColor,
+    super.splashColor,
+    super.disabledColor,
+    required super.onPressed,
+    super.mouseCursor,
+    super.focusNode,
+    super.autofocus = false,
+    super.tooltip,
+    super.enableFeedback,
+    super.constraints,
+    super.style,
+    super.isSelected,
+    super.selectedIcon,
+    required super.icon,
+  }) : super.outlined();
+
   /// The config for this [AsyncIconButton].
   final AsyncButtonConfig config;
 
@@ -45,7 +130,7 @@ class AsyncIconButton extends IconButton {
 }
 
 // ignore: library_private_types_in_public_api, public_member_api_docs
-extension AsyncFabDuplicateExtension on AsyncIconButton {
+extension AsyncIconButtonDuplicateExtension on AsyncIconButton {
   /// Unnecessary duplicate of [asAsync]. Remove this.
   @Deprecated('DUPLICATE, this widget is already asAsync, remove one.')
   Widget asAsync() => this;
@@ -73,7 +158,7 @@ extension AsyncIconButtonExtension on IconButton {
     AsyncThemer? errorThemer,
     AsyncThemer? successThemer,
     bool? keepHeight,
-    bool? keepWidth,
+    bool? keepWidth = true,
     bool? animateSize,
     AnimatedSizeConfig? animatedSizeConfig,
     Duration? errorDuration,
@@ -81,37 +166,114 @@ extension AsyncIconButtonExtension on IconButton {
     Duration? styleDuration,
     Curve? styleCurve,
   }) {
-    return AsyncButtonBuilder(
-      config: config ??
-          AsyncButtonConfig.icon(
-            successIcon: successIcon,
-            loadingIcon: loadingIcon,
-            errorIcon: errorIcon,
-            successColor: successColor,
-            loadingColor: loadingColor,
-            errorColor: errorColor,
-          ).copyWith(
-            successBuilder: successBuilder,
-            loadingBuilder: loadingBuilder,
-            errorBuilder: errorBuilder,
-            keepHeight: keepHeight,
-            keepWidth: keepWidth,
-            animateSize: animateSize,
-            animatedSizeConfig: animatedSizeConfig,
-            errorDuration: errorDuration,
-            successDuration: successDuration,
-            styleDuration: styleDuration,
-            styleCurve: styleCurve,
-            errorThemer: errorThemer,
-            loadingThemer: loadingThemer,
-            successThemer: successThemer,
-          ),
-      configurator: (context) => Async.of(context).floatingActionButtonConfig,
-      onPressed: onPressed,
-      child: icon,
-      builder: (context, state, child) {
-        return IconButton(onPressed: onPressed, icon: icon);
+    return _IconButtonVisitor(
+      builder: (variant) {
+        if (variant == null) return this;
+
+        return AsyncButtonBuilder(
+          config: config ??
+              AsyncButtonConfig.icon(
+                successIcon: successIcon,
+                loadingIcon: loadingIcon,
+                errorIcon: errorIcon,
+                successColor: successColor,
+                loadingColor: loadingColor,
+                errorColor: errorColor,
+              ).copyWith(
+                successBuilder: successBuilder,
+                loadingBuilder: loadingBuilder,
+                errorBuilder: errorBuilder,
+                keepHeight: keepHeight,
+                keepWidth: keepWidth,
+                animateSize: animateSize,
+                animatedSizeConfig: animatedSizeConfig,
+                errorDuration: errorDuration,
+                successDuration: successDuration,
+                styleDuration: styleDuration,
+                styleCurve: styleCurve,
+                errorThemer: errorThemer,
+                loadingThemer: loadingThemer,
+                successThemer: successThemer,
+              ),
+          configurator: (context) => Async.of(context).iconButtonConfig,
+          onPressed: onPressed,
+          child: icon,
+          builder: (context, state, child) {
+            final button = switch (variant) {
+              _IconButtonVariant.standard => IconButton.new,
+              _IconButtonVariant.filled => IconButton.filled,
+              _IconButtonVariant.filledTonal => IconButton.filledTonal,
+              _IconButtonVariant.outlined => IconButton.outlined,
+            };
+
+            return button(
+              // mods
+              onPressed: state.onPressed,
+              icon: child,
+
+              // props
+              key: key,
+              iconSize: iconSize,
+              visualDensity: visualDensity,
+              padding: padding,
+              alignment: alignment,
+              splashRadius: splashRadius,
+              color: color,
+              focusColor: focusColor,
+              hoverColor: hoverColor,
+              highlightColor: highlightColor,
+              splashColor: splashColor,
+              disabledColor: disabledColor,
+              mouseCursor: mouseCursor,
+              focusNode: focusNode,
+              autofocus: autofocus,
+              tooltip: tooltip,
+              enableFeedback: enableFeedback,
+              constraints: constraints,
+              style: style,
+              isSelected: isSelected,
+              selectedIcon: selectedIcon,
+            );
+          },
+        );
       },
     );
   }
 }
+
+class _IconButtonVisitor extends StatefulWidget {
+  const _IconButtonVisitor({required this.builder});
+  final Widget Function(_IconButtonVariant? variant) builder;
+
+  @override
+  State<_IconButtonVisitor> createState() => _IconButtonVisitorState();
+}
+
+class _IconButtonVisitorState extends State<_IconButtonVisitor> {
+  _IconButtonVariant? variant;
+
+  void setVariant(dynamic widget) {
+    // ignore: avoid_dynamic_calls
+    final index = (widget as dynamic).variant.index as int;
+    variant = _IconButtonVariant.values[index];
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.visit(
+        onWidget: (widget) {
+          if (widget is ButtonStyleButton) setVariant(widget);
+          return widget is ButtonStyleButton;
+        },
+      );
+      if (mounted) setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(variant);
+}
+
+enum _IconButtonVariant { standard, filled, filledTonal, outlined }
