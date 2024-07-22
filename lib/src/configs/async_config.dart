@@ -18,6 +18,7 @@ class AsyncConfig {
     this.errorBuilder,
     this.loadingBuilder,
     this.reloadingBuilder,
+    this.scrollLoadingBuilder,
     this.builderConfig,
     this.buttonConfig,
     this.textButtonConfig,
@@ -39,6 +40,9 @@ class AsyncConfig {
 
   /// The general [WidgetBuilder] for reloading state.
   final WidgetBuilder? reloadingBuilder;
+
+  /// The general [WidgetBuilder] for scroll loading state.
+  final WidgetBuilder? scrollLoadingBuilder;
 
   /// The config for `AsyncBuilder`. Overrides general builders.
   final AsyncBuilderConfig? builderConfig;
@@ -70,6 +74,7 @@ class AsyncConfig {
     ErrorBuilder? errorBuilder,
     WidgetBuilder? loadingBuilder,
     WidgetBuilder? reloadingBuilder,
+    WidgetBuilder? scrollLoadingBuilder,
     AsyncBuilderConfig? builderConfig,
     AsyncButtonConfig? buttonConfig,
     AsyncButtonConfig? elevatedButtonConfig,
@@ -84,6 +89,7 @@ class AsyncConfig {
       errorBuilder: errorBuilder ?? this.errorBuilder,
       loadingBuilder: loadingBuilder ?? this.loadingBuilder,
       reloadingBuilder: reloadingBuilder ?? this.reloadingBuilder,
+      scrollLoadingBuilder: scrollLoadingBuilder ?? this.scrollLoadingBuilder,
       builderConfig: builderConfig ?? this.builderConfig,
       buttonConfig: buttonConfig ?? this.buttonConfig,
       textButtonConfig: textButtonConfig ?? this.textButtonConfig,
@@ -104,6 +110,7 @@ class AsyncConfig {
       noneBuilder: noneBuilder ?? other.noneBuilder,
       loadingBuilder: loadingBuilder ?? other.loadingBuilder,
       reloadingBuilder: reloadingBuilder ?? other.reloadingBuilder,
+      scrollLoadingBuilder: scrollLoadingBuilder ?? other.scrollLoadingBuilder,
       builderConfig: builderConfig ?? other.builderConfig,
       buttonConfig: buttonConfig ?? other.buttonConfig,
       textButtonConfig: textButtonConfig ?? other.textButtonConfig,

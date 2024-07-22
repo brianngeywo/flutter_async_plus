@@ -142,7 +142,7 @@ extension AsyncIconButtonExtension on IconButton {
   ///
   /// - If [config] is set, all other parameters are ignored.
   /// - If any icon widget is set, the respective builder is ignored.
-  /// - If any seed color is set, the respective themer is ignored.
+  /// - If any seed color is set, the respective theme is ignored.
   Widget asAsync({
     AsyncButtonConfig? config,
     Widget? loadingIcon,
@@ -154,9 +154,9 @@ extension AsyncIconButtonExtension on IconButton {
     Color? loadingColor,
     Color? errorColor,
     Color? successColor,
-    AsyncThemer? loadingThemer,
-    AsyncThemer? errorThemer,
-    AsyncThemer? successThemer,
+    AsyncThemeGetter? loadingTheme,
+    AsyncThemeGetter? errorTheme,
+    AsyncThemeGetter? successTheme,
     bool? keepHeight,
     bool? keepWidth = true,
     bool? animateSize,
@@ -191,9 +191,9 @@ extension AsyncIconButtonExtension on IconButton {
                 successDuration: successDuration,
                 styleDuration: styleDuration,
                 styleCurve: styleCurve,
-                errorThemer: errorThemer,
-                loadingThemer: loadingThemer,
-                successThemer: successThemer,
+                errorTheme: errorTheme,
+                loadingTheme: loadingTheme,
+                successTheme: successTheme,
               ),
           configurator: (context) => Async.of(context).iconButtonConfig,
           onPressed: onPressed,

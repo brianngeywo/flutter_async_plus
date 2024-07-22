@@ -42,18 +42,19 @@ class MyWidget extends StatelessWidget {
         children: [
           Column(
             children: [
-              AsyncBuilder(
-                future: onError(), // or stream
-                loadingBuilder: (context) {
-                  return const CircularProgressIndicator();
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Text(error.toString());
-                },
-                builder: (context, data) {
-                  return const Text('data');
-                },
-              ),
+              // AsyncBuilder(
+              //   future: onError(), // or stream
+              //   loadingBuilder: (context) {
+              //     return const CircularProgressIndicator();
+              //   },
+              //   errorBuilder: (context, error, stackTrace) {
+              //     return Text(error.toString());
+              //   },
+              //   builder: (context, data) {
+              //     return const Text('data');
+              //   },
+              // ),
+
               AsyncButtonBuilder(
                 onPressed: onError,
                 child: const FlutterLogo(size: 120),
@@ -130,6 +131,25 @@ class MyWidget extends StatelessWidget {
                 icon: const Icon(Icons.add),
               ).asAsync(),
             ],
+          ),
+          SizedBox(
+            height: 400,
+            width: 400,
+            child: AsyncBuilder.paged(
+              future: (page) async {
+                await Future.delayed(duration);
+                return List.generate(10, (i) => 'Patient ${page * 10 + i}');
+              },
+              builder: (context, controller, list) {
+                return ListView.builder(
+                  controller: controller,
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(title: Text(list[index]));
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

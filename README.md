@@ -72,9 +72,9 @@ Here are the properties of AsyncBuilder:
  ),
 ```
 
-Or unlock some extra superpowers with `function` constructor for handling async functions:
+Use `function` constructor for handling async functions:
 
-This is usefeul for simple usecases with contained state management. If you are handling state in a separate class, better keep using the default constructor of  `AsyncBuilder`.
+This is usefeul for simple usecases with contained state management. If you are handling state in a separate class, better keep using the default constructor of `AsyncBuilder`.
 
 ```dart
  AsyncBuilder.function(
@@ -87,6 +87,26 @@ This is usefeul for simple usecases with contained state management. If you are 
     );
    },
  ),
+```
+
+Use `paged` constructor for handling pagination:
+
+```dart
+AsyncBuilder.paged(
+  future: (page) async {
+    await Future.delayed(duration);
+    return List.generate(10, (i) => 'Item ${page * 10 + i}');
+  },
+  builder: (context, controller, list) {
+    return ListView.builder(
+      controller: controller,
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        return ListTile(title: Text(list[index]));
+      },
+    );
+  },
+)
 ```
 
 ## AsyncButton

@@ -138,9 +138,9 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
       curve: _config.styleCurve,
       data: async.when(
         none: () => Theme.of(context),
-        loading: () => _config.loadingThemer(context),
-        error: (e, s) => _config.errorThemer(context),
-        data: (_) => _config.successThemer(context),
+        loading: () => _config.loadingTheme(context),
+        error: (e, s) => _config.errorTheme(context),
+        data: (_) => _config.successTheme(context),
       ),
       child: widget.builder(context, this, child),
     );

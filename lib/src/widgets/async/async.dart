@@ -128,9 +128,25 @@ class Async extends StatelessWidget {
     );
   }
 
+  /// Returns [AsyncConfig.scrollLoadingBuilder] or default.
+  static Widget scrollLoadingBuilder(BuildContext context) {
+    final builder = of(context).scrollLoadingBuilder;
+    if (builder != null) return builder(context);
+
+    return SizedBox(
+      height: 60,
+      child: Async.loadingBuilder(context),
+    );
+  }
+
   /// Returns the default [ThemeData] for error state.
-  static ThemeData errorThemer(BuildContext context) {
+  @Deprecated('Use errorTheme instead.')
+  static ThemeData errorThemer(BuildContext context) => errorTheme(context);
+
+  /// Returns the default [ThemeData] for error state.
+  static ThemeData errorTheme(BuildContext context) {
     final theme = Theme.of(context);
+
     return theme.copyWith(
       colorScheme: ColorScheme.fromSeed(
         seedColor: theme.colorScheme.error,
@@ -139,14 +155,22 @@ class Async extends StatelessWidget {
     );
   }
 
-  /// Returns the default [ThemeData] for success state.
-  static ThemeData successThemer(BuildContext context) {
+  /// Returns the default [ThemeData] for loading state.
+  @Deprecated('Use loadingTheme instead.')
+  static ThemeData loadingThemer(BuildContext context) => loadingTheme(context);
+
+  /// Returns the default [ThemeData] for loading state.
+  static ThemeData loadingTheme(BuildContext context) {
     final theme = Theme.of(context);
     return theme;
   }
 
-  /// Returns the default [ThemeData] for loading state.
-  static ThemeData loadingThemer(BuildContext context) {
+  /// Returns the default [ThemeData] for success state.
+  @Deprecated('Use successTheme instead.')
+  static ThemeData successThemer(BuildContext context) => successTheme(context);
+
+  /// Returns the default [ThemeData] for success state.
+  static ThemeData successTheme(BuildContext context) {
     final theme = Theme.of(context);
     return theme;
   }

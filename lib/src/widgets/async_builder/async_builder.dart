@@ -13,6 +13,7 @@ class AsyncBuilder<T> extends StatefulWidget {
   const AsyncBuilder({
     super.key,
     this.initialData,
+    this.onData,
     this.future,
     this.stream,
     this.alignment = Alignment.center,
@@ -37,6 +38,7 @@ class AsyncBuilder<T> extends StatefulWidget {
   const AsyncBuilder.function({
     super.key,
     this.initialData,
+    this.onData,
     this.interval,
     Future<T> Function()? future,
     Stream<T> Function()? stream,
@@ -55,6 +57,46 @@ class AsyncBuilder<T> extends StatefulWidget {
         streamFn = stream,
         future = null,
         stream = null;
+
+  /// Creates an paged [AsyncBuilder] with [future] function.
+  ///
+  /// This constructor is useful when you want to paginate data. Use [builder] to
+  /// show the list of data and attach the [ScrollController] to the list scroll.
+  ///
+  /// You can provide your own [scrollController] or a default will be created.
+  static Widget paged<T>({
+    Key? key,
+    required Future<List<T>> Function(int page) future,
+    required AsyncPagedBuilder<T> builder,
+    List<T> initialData = const [],
+    int initialPage = 0,
+    ValueChanged<List<T>>? onData,
+    Duration? interval,
+    AlignmentGeometry alignment = Alignment.center,
+    bool skipReloading = true,
+    WidgetBuilder reloadingBuilder = _reloadingBuilder,
+    ErrorBuilder errorBuilder = _errorBuilder,
+    WidgetBuilder loadingBuilder = _loadingBuilder,
+    WidgetBuilder scrollLoadingBuilder = Async.scrollLoadingBuilder,
+    ScrollController? scrollController,
+  }) {
+    return _AsyncPagedBuilder<T>(
+      key: key,
+      future: future,
+      builder: builder,
+      initialData: initialData,
+      initialPage: initialPage,
+      onData: onData,
+      interval: interval,
+      alignment: alignment,
+      skipReloading: skipReloading,
+      reloadingBuilder: reloadingBuilder,
+      errorBuilder: errorBuilder,
+      loadingBuilder: loadingBuilder,
+      scrollLoadingBuilder: scrollLoadingBuilder,
+      scrollController: scrollController ?? ScrollController(),
+    );
+  }
 
   static Widget _reloadingBuilder(BuildContext context) {
     final builder = Async.of(context).builderConfig?.reloadingBuilder;
@@ -86,6 +128,9 @@ class AsyncBuilder<T> extends StatefulWidget {
 
   /// The initial [T] data to pass to [builder].
   final T? initialData;
+
+  /// The result of `future/stream` when data changes.
+  final ValueChanged<T>? onData;
 
   /// The [Future] to listen.
   final Future<T>? future;
@@ -175,6 +220,12 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
   }
 
   @override
+  void onData(T data) {
+    super.onData(data);
+    widget.onData?.call(data);
+  }
+
+  @override
   void didUpdateWidget(covariant AsyncBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.future != oldWidget.future && widget.future != null) {
@@ -220,5 +271,107 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
         return child;
       },
     );
+  }
+}
+
+/// Signature to build the paged list of data.
+///
+/// You must attach this [ScrollController] for pagination.
+typedef AsyncPagedBuilder<T> = Widget Function(
+  BuildContext context,
+  ScrollController controller,
+  List<T> data,
+);
+
+class _AsyncPagedBuilder<T> extends StatefulWidget {
+  const _AsyncPagedBuilder({
+    required super.key,
+    required this.future,
+    required this.builder,
+    required this.initialData,
+    required this.initialPage,
+    required this.onData,
+    required this.interval,
+    required this.alignment,
+    required this.skipReloading,
+    required this.reloadingBuilder,
+    required this.errorBuilder,
+    required this.loadingBuilder,
+    required this.scrollLoadingBuilder,
+    required this.scrollController,
+  });
+
+  final Future<List<T>> Function(int page) future;
+  final AsyncPagedBuilder<T> builder;
+  final List<T> initialData;
+  final int initialPage;
+  final ValueChanged<List<T>>? onData;
+  final Duration? interval;
+  final AlignmentGeometry? alignment;
+  final bool skipReloading;
+  final WidgetBuilder reloadingBuilder;
+  final ErrorBuilder errorBuilder;
+  final WidgetBuilder loadingBuilder;
+  final WidgetBuilder scrollLoadingBuilder;
+  final ScrollController scrollController;
+
+  @override
+  State<_AsyncPagedBuilder<T>> createState() => _AsyncPagedBuilderState<T>();
+}
+
+class _AsyncPagedBuilderState<T> extends State<_AsyncPagedBuilder<T>> {
+  late final controller = widget.scrollController..addListener(scrollListener);
+  final _results = <T>[];
+  bool isLastPage = false;
+  bool isScrollLoading = false;
+  late int page = widget.initialPage;
+
+  Future<void> scrollListener() async {
+    final (pagedSearch, position) = (widget.future, controller.position);
+
+    if (position.isAtMax && !isLastPage && !isScrollLoading) {
+      setState(() => isScrollLoading = true);
+
+      final future = pagedSearch(++page);
+      final list = await future
+          .whenComplete(() => setState(() => isScrollLoading = false));
+
+      if (list.isEmpty) isLastPage = true;
+      _results.addAll(list);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AsyncBuilder.function(
+      future: () async {
+        final data = await widget.future(page = widget.initialPage);
+        _results.clear();
+        _results.addAll(data);
+        return data;
+      },
+      onData: widget.onData,
+      interval: widget.interval,
+      alignment: widget.alignment,
+      initialData: widget.initialData,
+      errorBuilder: widget.errorBuilder,
+      skipReloading: widget.skipReloading,
+      loadingBuilder: widget.loadingBuilder,
+      reloadingBuilder: widget.reloadingBuilder,
+      builder: (context, _) {
+        return Column(
+          children: [
+            Expanded(child: widget.builder(context, controller, _results)),
+            if (isScrollLoading) widget.scrollLoadingBuilder(context),
+          ],
+        );
+      },
+    );
+  }
+}
+
+extension on ScrollPosition {
+  bool get isAtMax {
+    return pixels >= maxScrollExtent;
   }
 }

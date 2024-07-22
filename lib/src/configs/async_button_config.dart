@@ -17,13 +17,13 @@ class AsyncButtonConfig {
     this.loadingBuilder,
     this.successBuilder,
     this.errorBuilder,
-    this.errorThemer,
-    this.loadingThemer,
-    this.successThemer,
+    this.errorTheme,
+    this.loadingTheme,
+    this.successTheme,
   });
 
   /// Shorthand for a [AsyncButtonConfig] with widgets instead of builders and
-  /// colors instead of themers.
+  /// colors instead of themes.
   ///
   /// The colors will be used to create a [ThemeData] with [ColorScheme.fromSeed].
   AsyncButtonConfig.icon({
@@ -44,9 +44,9 @@ class AsyncButtonConfig {
   })  : loadingBuilder = (loadingIcon != null ? (_) => loadingIcon : null),
         successBuilder = (successIcon != null ? (_) => successIcon : null),
         errorBuilder = (errorIcon != null ? (_, e, s) => errorIcon : null),
-        errorThemer = errorColor?.asSeedOf,
-        loadingThemer = loadingColor?.asSeedOf,
-        successThemer = successColor?.asSeedOf;
+        errorTheme = errorColor?.asSeedOf,
+        loadingTheme = loadingColor?.asSeedOf,
+        successTheme = successColor?.asSeedOf;
 
   /// Whether to keep button height on state changes. Defaults to `true`.
   final bool? keepHeight;
@@ -82,13 +82,13 @@ class AsyncButtonConfig {
   final ErrorBuilder? errorBuilder;
 
   /// The theme to use on error.
-  final AsyncThemer? errorThemer;
+  final AsyncThemeGetter? errorTheme;
 
   /// The theme to use on loading.
-  final AsyncThemer? loadingThemer;
+  final AsyncThemeGetter? loadingTheme;
 
   /// The theme to use on success.
-  final AsyncThemer? successThemer;
+  final AsyncThemeGetter? successTheme;
 }
 
 extension on Color {
@@ -102,8 +102,8 @@ extension on Color {
   }
 }
 
-///
-typedef AsyncThemer = ThemeData Function(BuildContext context);
+/// Gets a [ThemeData] from a [BuildContext].
+typedef AsyncThemeGetter = ThemeData Function(BuildContext context);
 
 /// Configuration for [AnimatedSize].
 class AnimatedSizeConfig {
@@ -150,9 +150,9 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
     this.errorBuilder = Async.errorBuilder,
     this.loadingBuilder = Async.loadingBuilder,
     this.successBuilder,
-    this.errorThemer = Async.errorThemer,
-    this.loadingThemer = Async.loadingThemer,
-    this.successThemer = Async.successThemer,
+    this.errorTheme = Async.errorTheme,
+    this.loadingTheme = Async.loadingTheme,
+    this.successTheme = Async.successTheme,
   });
 
   @override
@@ -189,13 +189,13 @@ class AsyncButtonResolvedConfig implements AsyncButtonConfig {
   final WidgetBuilder? successBuilder;
 
   @override
-  final AsyncThemer errorThemer;
+  final AsyncThemeGetter errorTheme;
 
   @override
-  final AsyncThemer loadingThemer;
+  final AsyncThemeGetter loadingTheme;
 
   @override
-  final AsyncThemer successThemer;
+  final AsyncThemeGetter successTheme;
 }
 
 ///
@@ -213,9 +213,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
     WidgetBuilder? loadingBuilder,
     WidgetBuilder? successBuilder,
     ErrorBuilder? errorBuilder,
-    AsyncThemer? errorThemer,
-    AsyncThemer? loadingThemer,
-    AsyncThemer? successThemer,
+    AsyncThemeGetter? errorTheme,
+    AsyncThemeGetter? loadingTheme,
+    AsyncThemeGetter? successTheme,
   }) {
     return AsyncButtonConfig(
       keepHeight: keepHeight ?? this.keepHeight,
@@ -229,9 +229,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
       loadingBuilder: loadingBuilder ?? this.loadingBuilder,
       successBuilder: successBuilder ?? this.successBuilder,
       errorBuilder: errorBuilder ?? this.errorBuilder,
-      errorThemer: errorThemer ?? this.errorThemer,
-      loadingThemer: loadingThemer ?? this.loadingThemer,
-      successThemer: successThemer ?? this.successThemer,
+      errorTheme: errorTheme ?? this.errorTheme,
+      loadingTheme: loadingTheme ?? this.loadingTheme,
+      successTheme: successTheme ?? this.successTheme,
     );
   }
 
@@ -250,9 +250,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
       loadingBuilder: loadingBuilder ?? other.loadingBuilder,
       successBuilder: successBuilder ?? other.successBuilder,
       errorBuilder: errorBuilder ?? other.errorBuilder,
-      errorThemer: errorThemer ?? other.errorThemer,
-      loadingThemer: loadingThemer ?? other.loadingThemer,
-      successThemer: successThemer ?? other.successThemer,
+      errorTheme: errorTheme ?? other.errorTheme,
+      loadingTheme: loadingTheme ?? other.loadingTheme,
+      successTheme: successTheme ?? other.successTheme,
     );
   }
 
@@ -272,9 +272,9 @@ extension AsyncButtonConfigExtension on AsyncButtonConfig {
       errorBuilder: errorBuilder ?? def.errorBuilder,
       loadingBuilder: loadingBuilder ?? def.loadingBuilder,
       successBuilder: successBuilder ?? def.successBuilder,
-      errorThemer: errorThemer ?? def.errorThemer,
-      loadingThemer: loadingThemer ?? def.loadingThemer,
-      successThemer: successThemer ?? def.successThemer,
+      errorTheme: errorTheme ?? def.errorTheme,
+      loadingTheme: loadingTheme ?? def.loadingTheme,
+      successTheme: successTheme ?? def.successTheme,
     );
   }
 }

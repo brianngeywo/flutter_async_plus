@@ -2,6 +2,14 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.10.0 - Jul 22, 2024
+
+- Added `AsyncBuilder.paged` constructor.
+- Added `scrollLoadingBuilder` to `AsyncConfig`.
+- Updated example and README.
+- Deprecated `AsyncThemer` in favor of `AsyncTheme`. All methods and parameters renamed accordingly.
+- Removed `animated_value` dependency from `pubspec.yaml`.
+
 ## 0.9.2 - Jun 19, 2024
 
 - Make internal extensions exportable.
@@ -63,10 +71,10 @@ You can also call it manually with `Async.message` static function.
 
 - Added `AsyncButtonConfig.successBuilder`. An optional builder to customize the success state (for buttons).
 
-- Added `AsyncThemer`, so you can easily theme all async buttons states.
-  - `AsyncButtonConfig.errorThemer`;
-  - `AsyncButtonConfig.loadingThemer`;
-  - `AsyncButtonConfig.successThemer`;
+- Added `AsyncThemeGetter`, so you can easily theme all async buttons states.
+  - `AsyncButtonConfig.errorTheme`;
+  - `AsyncButtonConfig.loadingTheme`;
+  - `AsyncButtonConfig.successTheme`;
 
 - Added `AsyncButtonConfig.icon` shorthand constructor to set icon widgets or seeded colors when the builders aren't needed.
 
