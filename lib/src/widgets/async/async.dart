@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../configs/async_config.dart';
@@ -56,6 +57,19 @@ class Async extends StatelessWidget {
   /// by setting [Async.translator].
   ///
   static String message(Object? e) => translator(e);
+
+  /// The default logger for any error.
+  ///
+  /// You can override this by setting [Async.errorLogger].
+  static void Function(Object e, StackTrace s) errorLogger = (e, s) {
+    if (kDebugMode) {
+      print(
+        'Error caught by [flutter_async]:\n'
+        '.message: ${Async.message(e)}\n'
+        '.toString(): $e\n',
+      );
+    }
+  };
 
   /// The library default error message.
   static String defaultMessage(Object? e) {

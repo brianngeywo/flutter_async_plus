@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.10.1 - Jul 23, 2024
+
+- Added `Async.errorLogger`, by default logs any error on debug mode. Overridable.
+
 ## 0.10.0 - Jul 22, 2024
 
 - Added `AsyncBuilder.paged` constructor.

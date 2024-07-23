@@ -1,6 +1,8 @@
 import 'package:async_notifier/async_notifier.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/async/async.dart';
+
 /// A [State] with an [AsyncNotifier].
 abstract class AsyncState<T extends StatefulWidget, Data> extends State<T> {
   /// The [AsyncNotifier] of this state.
@@ -16,7 +18,9 @@ abstract class AsyncState<T extends StatefulWidget, Data> extends State<T> {
   /// Called whenever [AsyncSnapshot] resolves with error.
   @protected
   @mustCallSuper
-  void onError(Object error, StackTrace? stackTrace) {}
+  void onError(Object error, StackTrace stackTrace) {
+    Async.errorLogger(error, stackTrace);
+  }
 
   /// Called when [AsyncSnapshot] resolves with new data.
   @protected

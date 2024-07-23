@@ -332,12 +332,16 @@ class _AsyncPagedBuilderState<T> extends State<_AsyncPagedBuilder<T>> {
     if (position.isAtMax && !isLastPage && !isScrollLoading) {
       setState(() => isScrollLoading = true);
 
-      final future = pagedSearch(++page);
-      final list = await future
-          .whenComplete(() => setState(() => isScrollLoading = false));
+      try {
+        final list = await pagedSearch(++page);
 
-      if (list.isEmpty) isLastPage = true;
-      _results.addAll(list);
+        if (list.isEmpty) isLastPage = true;
+        _results.addAll(list);
+      } catch (e, s) {
+        Async.errorLogger(e, s);
+      }
+
+      setState(() => isScrollLoading = false);
     }
   }
 
