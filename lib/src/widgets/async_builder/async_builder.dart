@@ -12,6 +12,7 @@ class AsyncBuilder<T> extends StatefulWidget {
   /// Creates an [AsyncBuilder] with [future] or [stream].
   const AsyncBuilder({
     super.key,
+    this.snapshot,
     this.initialData,
     this.onData,
     this.future,
@@ -55,6 +56,7 @@ class AsyncBuilder<T> extends StatefulWidget {
         ),
         futureFn = future,
         streamFn = stream,
+        snapshot = null,
         future = null,
         stream = null;
 
@@ -125,6 +127,11 @@ class AsyncBuilder<T> extends StatefulWidget {
 
     return Async.errorBuilder(context, e, s);
   }
+
+  /// The [AsyncSnapshot] to resolve.
+  ///
+  /// Setting this override the internal `AsyncNotifier.snapshot`.
+  final AsyncSnapshot<T>? snapshot;
 
   /// The initial [T] data to pass to [builder].
   final T? initialData;
@@ -220,9 +227,8 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
   }
 
   @override
-  void onData(T data) {
-    super.onData(data);
-    widget.onData?.call(data);
+  void onSnapshot(AsyncSnapshot<T> snapshot) {
+    snapshot.whenOrNull(data: widget.onData);
   }
 
   @override
@@ -245,9 +251,11 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
 
   @override
   Widget build(BuildContext context) {
+    final snapshot = widget.snapshot ?? async.snapshot;
+
     return Builder(
       builder: (context) {
-        var child = async.when(
+        var child = snapshot.when(
           skipLoading: !widget.skipReloading,
           none: () => widget.noneBuilder(context),
           error: (e, s) => widget.errorBuilder(context, e, s),
@@ -263,7 +271,7 @@ class AsyncBuilderState<T> extends AsyncState<AsyncBuilder<T>, T> {
           child = Stack(
             children: [
               child,
-              if (async.isReloading) widget.reloadingBuilder(context),
+              if (snapshot.isReloading) widget.reloadingBuilder(context),
             ],
           );
         }
@@ -378,4 +386,10 @@ extension on ScrollPosition {
   bool get isAtMax {
     return pixels >= maxScrollExtent;
   }
+}
+
+///
+extension FlutterAsyncSnapshotExtension<T> on AsyncSnapshot<T> {
+  /// The error message of this [AsyncSnapshot.error].
+  String? get errorMessage => hasError ? Async.message(error) : null;
 }

@@ -78,15 +78,19 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _size ??= context.size);
   }
 
+  void _reset() {
+    async.value = const AsyncSnapshot.nothing();
+  }
+
   @override
   void onSnapshot(AsyncSnapshot<void> snapshot) {
-    super.onSnapshot(snapshot);
     _successTimer?.cancel();
     _errorTimer?.cancel();
 
+    // resets button state after success/error duration
     snapshot.whenOrNull(
-      data: (_) => _successTimer = Timer(_config.successDuration, cancel),
-      error: (e, s) => _errorTimer = Timer(_config.errorDuration, cancel),
+      data: (_) => _successTimer = Timer(_config.successDuration, _reset),
+      error: (e, s) => _errorTimer = Timer(_config.errorDuration, _reset),
     );
   }
 
@@ -103,11 +107,13 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
 
   @override
   Widget build(BuildContext context) {
+    final snapshot = async.snapshot;
+
     final child = Builder(
       builder: (context) {
         if (_size == null) _setSize(context);
 
-        var child = async.snapshot.when(
+        var child = snapshot.when(
           none: () => widget.child,
           loading: () => _config.loadingBuilder(context),
           error: (e, s) => _config.errorBuilder(context, e, s),
@@ -136,7 +142,7 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
     return AnimatedTheme(
       duration: _config.styleDuration,
       curve: _config.styleCurve,
-      data: async.when(
+      data: snapshot.when(
         none: () => Theme.of(context),
         loading: () => _config.loadingTheme(context),
         error: (e, s) => _config.errorTheme(context),

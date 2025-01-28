@@ -64,7 +64,7 @@ class _AdaptiveThemeState extends State<AdaptiveTheme> {
         color = (widget.decoration as BoxDecoration).color;
       }
 
-      if (color != null && color!.alpha != 0) {
+      if (color != null && color!.a != 0) {
         return false;
       }
       return true;

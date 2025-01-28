@@ -189,6 +189,10 @@ class Async extends StatelessWidget {
     return theme;
   }
 
+  /// Shortcut to find the nearest active [BuildContext].
+  static BuildContext get context =>
+      WidgetsBinding.instance.focusManager.context;
+
   @override
   Widget build(BuildContext context) {
     return Builder(
@@ -199,6 +203,14 @@ class Async extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+extension on FocusManager {
+  BuildContext get context {
+    return primaryFocus?.context ??
+        rootScope.focusedChild?.context ??
+        rootScope.context!;
   }
 }
 

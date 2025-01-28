@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async/flutter_async.dart';
+// import 'package:riverpod/riverpod.dart';
 
 void main() => runApp(
       MaterialApp(
@@ -7,23 +8,23 @@ void main() => runApp(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.blue,
-            brightness: Brightness.light,
           ),
         ),
         home: const Scaffold(
-          body: MyWidget(),
+          body: _MyWidget(),
         ),
       ),
     );
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+class _MyWidget extends StatelessWidget {
+  const _MyWidget();
 
   static const duration = Duration(seconds: 1);
   static const fabPadding = EdgeInsets.all(8);
 
   Future<void> onError() async {
-    await Future.delayed(duration);
+    await Future<void>.delayed(duration);
+    // ignore: strict_raw_type
     throw ParallelWaitError<List, List>([], [
       'Invalid user',
       'The email is already in use',
@@ -32,14 +33,28 @@ class MyWidget extends StatelessWidget {
   }
 
   Future<void> onSuccess() async {
-    await Future.delayed(duration);
+    await Future<void>.delayed(duration);
   }
 
   @override
   Widget build(BuildContext context) {
+    const snapshot = AsyncSnapshot.withData(ConnectionState.done, 42);
+    if (snapshot.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (snapshot.hasError) {
+      return Center(child: Text(snapshot.error.toString()));
+    }
+
     return Scaffold(
       body: Row(
         children: [
+          switch (const AsyncSnapshot<int>.nothing()) {
+            AsyncSnapshot(:final data?) => Center(child: Text(data.toString())),
+            AsyncSnapshot(:final error?) =>
+              Center(child: Text(error.toString())),
+            _ => const CircularProgressIndicator(),
+          },
           Column(
             children: [
               // AsyncBuilder(
@@ -137,7 +152,7 @@ class MyWidget extends StatelessWidget {
             width: 400,
             child: AsyncBuilder.paged(
               future: (page) async {
-                await Future.delayed(duration);
+                await Future<void>.delayed(duration);
                 return List.generate(10, (i) => 'Patient ${page * 10 + i}');
               },
               builder: (context, controller, list) {
@@ -188,32 +203,4 @@ class MyWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-class AsyncSearchBox<T> extends StatelessWidget {
-  const AsyncSearchBox({
-    super.key,
-    required this.search,
-    required this.suggestionBuilder,
-  });
-  final Future<List<T>> Function(String query) search;
-  final Widget Function(BuildContext context, T value) suggestionBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    return SearchAnchor.bar(
-      suggestionsBuilder: (context, controller) async {
-        return [
-          for (final value in await search(controller.text))
-            suggestionBuilder(context, value),
-        ];
-      },
-    );
-  }
-}
-
-class Patient {
-  const Patient({this.name = '', this.age = 0});
-  final String name;
-  final int age;
 }

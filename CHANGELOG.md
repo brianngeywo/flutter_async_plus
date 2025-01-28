@@ -2,6 +2,25 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.12.0 - Jan 27, 2025
+- Bump `async_notifier` to 0.5.0.
+- Fix `AsyncButton` to correctly reset its state after success/error.
+
+## 0.11.1 - Dec 02, 2024
+
+- Added `async_notifier` export.
+
+## 0.11.0 - Dec 02, 2024
+
+- Bump `async_notifier` to 0.4.0.
+- Added `AsyncBuilder.snapshot` property.
+- Added `AsyncSnapshot.errorMessage` property.
+
+## 0.10.2 - Oct 08, 2024
+
+- Added `AsyncFutureExtension.showSnackBar`.
+- Added `AsyncFutureExtension.showLoading`.
+
 ## 0.10.1 - Jul 23, 2024
 
 - Added `Async.errorLogger`, by default logs any error on debug mode. Overridable.
