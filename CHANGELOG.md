@@ -2,7 +2,12 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.12.1 - Feb 10, 2025
+
+- Prevent multiple calls to any `AsyncButton` while loading.
+
 ## 0.12.0 - Jan 27, 2025
+
 - Bump `async_notifier` to 0.5.0.
 - Fix `AsyncButton` to correctly reset its state after success/error.
 

@@ -55,7 +55,7 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
 
   /// Invokes [AsyncButtonBuilder.onPressed] programatically.
   void press() {
-    if (widget.onPressed != null) {
+    if (widget.onPressed != null && !snapshot.isLoading) {
       async.future = Future(widget.onPressed!);
     }
   }
@@ -65,7 +65,7 @@ class AsyncButtonBuilderState extends AsyncState<AsyncButtonBuilder, void> {
 
   /// Invokes [AsyncButtonBuilder.onLongPress] programatically.
   void longPress() {
-    if (widget.onLongPress != null) {
+    if (widget.onLongPress != null && !snapshot.isLoading) {
       async.future = Future(widget.onLongPress!);
     }
   }
