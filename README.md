@@ -1,45 +1,62 @@
 # Flutter Async
 
-Flutter Async transforms traditional Flutter widgets into their asynchronous counterparts, enabling seamless handling of async operations. By extending familiar widgets with async functionality, this package allows for the effortless execution of background tasks, data fetching, and more, while providing feedback through loaders and handling errors—all without compromising the responsiveness of your app's interface.
+Flutter Async enhances Flutter widgets with async capabilities.
 
-## Getting Started
+## Setup
 
-- Optional, but you can add `Async` widget to the root of your app. This allows you to configure or override the default behavior of flutter_async. You can scope how many `Async` widgets you want.
-
-Use async as scope to provide custom [AsyncConfig]:
+Simply add `asAsync`. This will automatically update it to handle loading & error states.
 
 ```dart
-    return Async(
-      config: AsyncConfig(
-        loadingBuilder: (_) => CircurlarProgressIndicator(),
-        textButtonConfig: AsyncButtonConfig(
-          loadingBuilder: (_) => const Text('loading'),
-        ),
-      ),
-      child: // your scope.
-    )
+  ElevatedButton(
+    onPressed: () async { // <- mark it 'async'
+      await Future.delayed(const Duration(seconds: 1));
+    }
+    child: const Text('ElevatedButton'),
+  ).asAsync(), // <- add 'asAsync'
 ```
 
-## AsyncIndicator
+### Supported widgets:
 
-A smart `CircularProgressIndicator` that automatically chooses betweens primary, onPrimary and fallback theme colors based on the color below it. Additionally never distorts when sized, can be overlayed on other widgets and linear interpolates stroke width when scaled down.
+The following widgets and their variants are supported:
+
+| Widget                     | Variants                          |
+|----------------------------|-----------------------------------|
+| `ElevatedButton`           | icon                              |
+| `OutlinedButton`           | icon                              |
+| `TextButton`               | icon                              |
+| `FilledButton`             | icon, tonal, tonalIcon            |
+| `FloatingActionButton`     | small, large, extended            |
+| `IconButton`               | filled, filledTonal, outlined     |
+
+
+## Future<T> extensions
+
+You can also automatically handle async states of any `Future<T>`:
 
 ```dart
-  AsyncIndicator()
-  // or call it through the extension method:
-  CircularProgressIndicator().asAsync()
+// shows loading indicator while loading, hides when completed.
+final todos = await getTodos().showLoading();
+
+// shows error message if it completes with an error.
+final todos = await getTodos().showSnackBar();
+
+// you can customize the error message or add a success message.
+final todos = await getTodos().showSnackBar(
+  errorMessage: 'Failed to load todos',
+  successMessage: 'Todos loaded successfully',
+);
 ```
 
-This is the default `Async.loadingBuilder` for flutter_async. You can use it just like any progress indicator:
+> This is possible thanks to `Async.context`, which defaults to the root `NavigatorState.context` of the app. If needed, you can provide a custom context by calling `showSnackBar(context: myContext)`.
 
-```dart
-Builder(
-  builder: (context) {
-    if (isLoading) return AsyncIndicator();
-    return ...
-  }
-)
-```
+You can customize the default loading using `Async` widget with your `AsyncConfig`.
+
+You can customize the [SnackBar] shown, using:
+- `AsyncSnackBar.errorBuilder`
+- `AsyncSnackBar.successBuilder`
+- `AsyncSnackBar.animationStyle`
+
+Tip: It's highly recommended to simply modify you [ThemeData.snackBarTheme] instead.
 
 ## AsyncBuilder
 
@@ -49,6 +66,7 @@ Here are the properties of AsyncBuilder:
 
 ```dart
  AsyncBuilder(
+   // snapshot: // <- to direcly resolve a snapshot
    future: myFuture, // or stream
    noneBuilder: (context) {
     // shown when operation is not yet started. Ex: future and stream are null
@@ -109,62 +127,20 @@ AsyncBuilder.paged(
 )
 ```
 
-## AsyncButton
+## Customization
 
-Simply put Async in front of your Button.
-
-```dart
-  AsyncElevatedButton(
-    onPressed: onHello,
-    child: const Text('AsyncElevatedButton'),
-  ),
-```
-
-Or use the AsyncButtonExtension, works on any flutter's ButtonStyleButton:
+- Optional, but you can use [Async] config scope. This allows you to configure or override the default behavior of flutter_async. Works the same way as [Theme] widget for theming.
 
 ```dart
-  ElevatedButton(
-    onPressed: onHello,
-    child: const Text('ElevatedButton'),
-  ).asAsync(),
-```
-
-Control them programatically with:
-
-```dart
-  AsyncButton.at(context).press();
-  AsyncButton.at(context).longPress();
-```
-
-### AsyncButtonConfig Properties
-
-```dart
-  /// Whether to keep button height on state changes. Defaults to `true`.
-  final bool? keepHeight;
-
-  /// Whether to keep button width on state changes. Defaults to `false`.
-  final bool? keepWidth;
-
-  /// Whether this button should animate its size.
-  final bool? animateSize;
-
-  /// The configuration for [AnimatedSize].
-  final AnimatedSizeConfig? animatedSizeConfig;
-
-  /// The duration to show error widget.
-  final Duration? errorDuration;
-
-  /// The duration between styles animations.
-  final Duration? styleDuration;
-
-  /// The curve to use on styles animations.
-  final Curve? styleCurve;
-
-  /// The widget to show on loading.
-  final WidgetBuilder? loadingBuilder;
-
-  /// The widget to show on error.
-  final ErrorBuilder? errorBuilder;
+    return Async(
+      config: AsyncConfig(
+        loadingBuilder: (_) => CircurlarProgressIndicator(),
+        textButtonConfig: AsyncButtonConfig(
+          loadingBuilder: (_) => const Text('loading'),
+        ),
+      ),
+      child: // your scope.
+    )
 ```
 
 ## Future Plans and Development

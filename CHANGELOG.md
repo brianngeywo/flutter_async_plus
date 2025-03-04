@@ -2,6 +2,13 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.13.0 - Mar 04, 2025
+
+- Added [AsyncSnackBar] future extension & static customizations.
+- Changed `Async.context` to consistently return root `NavigatorState.context`.
+- Removed `async_notifier` export.
+- Updated `README.md`.
+
 ## 0.12.1 - Feb 10, 2025
 
 - Prevent multiple calls to any `AsyncButton` while loading.

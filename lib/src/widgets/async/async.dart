@@ -16,7 +16,7 @@ typedef ErrorBuilder = Widget Function(
 );
 
 /// A signature for the [Async.loadingBuilder] function.
-typedef AsyncThemeBuilder = ThemeData Function(BuildContext context);
+typedef ThemeBuilder = ThemeData Function(BuildContext context);
 
 /// Async scope for flutter_async.
 class Async extends StatelessWidget {
@@ -189,9 +189,9 @@ class Async extends StatelessWidget {
     return theme;
   }
 
-  /// Shortcut to find the nearest active [BuildContext].
-  static BuildContext get context =>
-      WidgetsBinding.instance.focusManager.context;
+  /// Shortcut to get the root [NavigatorState.context].
+  /// - Use this to show a dialog/snackbar on the root [Navigator] scope.
+  static BuildContext get context => WidgetsBinding.instance.navigator.context;
 
   @override
   Widget build(BuildContext context) {
@@ -206,11 +206,11 @@ class Async extends StatelessWidget {
   }
 }
 
-extension on FocusManager {
-  BuildContext get context {
-    return primaryFocus?.context ??
-        rootScope.focusedChild?.context ??
-        rootScope.context!;
+extension on WidgetsBinding {
+  /// Returns the root [NavigatorState].
+  NavigatorState get navigator {
+    final context = focusManager.rootScope.descendants.first.context; // leaf
+    return Navigator.of(context!, rootNavigator: true);
   }
 }
 

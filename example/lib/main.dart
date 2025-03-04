@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_async/flutter_async.dart';
-// import 'package:riverpod/riverpod.dart';
 
 void main() => runApp(
-      MaterialApp(
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-          ),
-        ),
-        home: const Scaffold(
+      const MaterialApp(
+        home: Scaffold(
           body: _MyWidget(),
         ),
       ),
@@ -38,14 +31,6 @@ class _MyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const snapshot = AsyncSnapshot.withData(ConnectionState.done, 42);
-    if (snapshot.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (snapshot.hasError) {
-      return Center(child: Text(snapshot.error.toString()));
-    }
-
     return Scaffold(
       body: Row(
         children: [

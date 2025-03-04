@@ -1,8 +1,6 @@
 /// A library to easily display asynchronous operations in Flutter.
 library flutter_async;
 
-export 'package:async_notifier/async_notifier.dart';
-
 export 'src/configs/async_config.dart';
 export 'src/extensions/element.dart';
 export 'src/extensions/future.dart';
