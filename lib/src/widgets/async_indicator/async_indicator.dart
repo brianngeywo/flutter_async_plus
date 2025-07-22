@@ -125,16 +125,13 @@ class _AsyncIndicatorState extends State<AsyncIndicator> {
                 fit: BoxFit.scaleDown,
                 child: SizedBox.square(
                   dimension: dimension,
-                  child: CircularProgressIndicator(
-                    value: widget.value,
-                    backgroundColor: widget.backgroundColor,
-                    color: widget.color,
-                    valueColor: widget.valueColor,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballRotate,
+                    colors: [
+                      widget.color ?? AppTheme.primaryBlue,
+                      widget.backgroundColor ?? AppTheme.primaryGreen,
+                    ],
                     strokeWidth: strokeWidth,
-                    strokeAlign: widget.strokeAlign,
-                    semanticsLabel: widget.semanticsLabel,
-                    semanticsValue: widget.semanticsValue,
-                    strokeCap: widget.strokeCap,
                   ),
                 ),
               ),
