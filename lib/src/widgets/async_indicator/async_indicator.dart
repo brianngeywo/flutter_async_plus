@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
+import '../../themes/theme.dart';
 import '../../utils/adaptive_theme.dart';
 
 /// A smart adaptive [CircularProgressIndicator].
