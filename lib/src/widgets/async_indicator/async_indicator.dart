@@ -128,8 +128,8 @@ class _AsyncIndicatorState extends State<AsyncIndicator> {
                   child: LoadingIndicator(
                     indicatorType: Indicator.ballRotate,
                     colors: [
-                      widget.color ?? AppTheme.primaryBlue,
-                      widget.backgroundColor ?? AppTheme.primaryGreen,
+                      AppTheme.primaryBlue,
+                      AppTheme.primaryGreen,
                     ],
                     strokeWidth: strokeWidth,
                   ),
