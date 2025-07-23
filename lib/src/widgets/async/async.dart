@@ -18,7 +18,7 @@ typedef ErrorBuilder = Widget Function(
 /// A signature for the [Async.loadingBuilder] function.
 typedef ThemeBuilder = ThemeData Function(BuildContext context);
 
-/// Async scope for flutter_async.
+/// Async scope for async_o_loader.
 class Async extends StatelessWidget {
   /// Creates an [Async] widget.
   const Async({
@@ -64,7 +64,7 @@ class Async extends StatelessWidget {
   static void Function(Object e, StackTrace s) errorLogger = (e, s) {
     if (kDebugMode) {
       print(
-        'Error caught by [flutter_async]:\n'
+        'Error caught by [async_o_loader]:\n'
         '.message: ${Async.message(e)}\n'
         '.toString(): $e\n',
       );

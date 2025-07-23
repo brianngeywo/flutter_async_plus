@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../flutter_async.dart';
+import '../../async_o_loader.dart';
 
 /// The configuration of [AsyncFloatingActionButton].
 class AsyncFloatingActionButtonConfig {

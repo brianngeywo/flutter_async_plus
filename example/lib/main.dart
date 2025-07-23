@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_async/flutter_async.dart';
+import 'package:async_o_loader/async_o_loader.dart';
 
 void main() => runApp(
       const MaterialApp(

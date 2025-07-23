@@ -146,7 +146,7 @@ Some breaking changes were made to improve the library and make it simpler, more
 
 - Adds `AsyncNotifier` as new core:
 
-  [async_notifier](https://pub.dev/packages/async_notifier) is now a standalone package. Note: This library is not exported by `flutter_async`.
+  [async_notifier](https://pub.dev/packages/async_notifier) is now a standalone package. Note: This library is not exported by `async_o_loader`.
 
 - **BREAKING CHANGE**
 The library was restructured to envision better maintenability and focus on displaying async states only.

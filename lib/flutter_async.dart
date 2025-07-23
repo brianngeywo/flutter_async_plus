@@ -1,5 +1,5 @@
 /// A library to easily display asynchronous operations in Flutter.
-library flutter_async;
+library async_o_loader;
 
 export 'src/configs/async_config.dart';
 export 'src/extensions/element.dart';

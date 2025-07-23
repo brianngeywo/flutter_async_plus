@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="0dd02bb9-ef62-4705-af6a-bf36027365ae" name="Changes" comment="ADDED custom colors and loading indicator">
+    <list default="true" id="0dd02bb9-ef62-4705-af6a-bf36027365ae" name="Changes" comment="ADDED loading indicator">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/widgets/async_indicator/async_indicator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/async_indicator/async_indicator.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/example/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/kotlin/com/branvier/flutter_async_examples/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/kotlin/com/branvier/flutter_async_examples/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner/Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/linux/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/example/linux/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/linux/my_application.cc" beforeDir="false" afterPath="$PROJECT_DIR$/example/linux/my_application.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Runner/Configs/AppInfo.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Runner/Configs/AppInfo.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/example/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/web/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/example/web/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/windows/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/example/windows/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/windows/runner/Runner.rc" beforeDir="false" afterPath="$PROJECT_DIR$/example/windows/runner/Runner.rc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/windows/runner/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/example/windows/runner/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/flutter_async.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/flutter_async.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/async_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/async_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/configs/async_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/configs/async_config.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/configs/async_floating_action_button_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/configs/async_floating_action_button_config.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/async/async.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/async/async.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +93,8 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "show.migrate.to.gradle.popup": "false"
   }
@@ -98,7 +127,8 @@
       <updated>1753174843440</updated>
       <workItem from="1753174844715" duration="318000" />
       <workItem from="1753175565832" duration="277000" />
-      <workItem from="1753176131142" duration="171000" />
+      <workItem from="1753176131142" duration="285000" />
+      <workItem from="1753255919990" duration="458000" />
     </task>
     <task id="LOCAL-00001" summary="ADDED custom colors and loading indicator">
       <option name="closed" value="true" />
@@ -116,7 +146,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753175829721</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="ADDED loading indicator">
+      <option name="closed" value="true" />
+      <created>1753176396102</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1753176396102</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -130,6 +168,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ADDED custom colors and loading indicator" />
-    <option name="LAST_COMMIT_MESSAGE" value="ADDED custom colors and loading indicator" />
+    <MESSAGE value="ADDED loading indicator" />
+    <option name="LAST_COMMIT_MESSAGE" value="ADDED loading indicator" />
   </component>
 </project>

@@ -7,7 +7,7 @@ import '../widgets/async/async.dart';
 part 'async_builder_config.dart';
 part 'async_button_config.dart';
 
-/// The entire configuration of `flutter_async`, holded by [Async].
+/// The entire configuration of `async_o_loader`, holded by [Async].
 @immutable
 class AsyncConfig {
   /// Creates a new [AsyncConfig].

@@ -1,5 +1,5 @@
-name: flutter_async_examples
-description: Examples for flutter_async package.
+name: async_o_loader_examples
+description: Examples for async_o_loader package.
 publish_to: 'none'
 version: 0.1.0
 
@@ -10,7 +10,7 @@ dependencies:
   async_notifier: ^0.5.0
   flutter:
     sdk: flutter
-  flutter_async:
+  async_o_loader:
     path: ../
 
 dev_dependencies:

@@ -1,6 +1,6 @@
 {
-    "name": "flutter_async_examples",
-    "short_name": "flutter_async_examples",
+    "name": "async_o_loader_examples",
+    "short_name": "async_o_loader_examples",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
